@@ -14,11 +14,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
-import com.adobe.marketing.mobile.Log;
+import com.adobe.marketing.mobile.services.Log;
 import com.adobe.marketing.mobile.services.NamedCollection;
 import com.adobe.marketing.mobile.services.ServiceProvider;
-import com.adobe.marketing.mobile.utils.DataReader;
-import com.adobe.marketing.mobile.utils.DataReaderException;
+import com.adobe.marketing.mobile.util.DataReader;
+import com.adobe.marketing.mobile.util.DataReaderException;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,7 +33,7 @@ class ProfileData {
     private static final String USER_PROFILE_DATASTORE_NAME = "ADBUserProfile";
     private static final String KEY_USER_PROFILE = "user_profile";
     private static final String EMPTY_JSON = "{}";
-    private static final String LOG_TAG = "PersistentProfileData";
+    private static final String CLASS_NAME = "PersistentProfileData";
     private final NamedCollection namedCollection;
     private Map<String, Object> data = new HashMap<>();
 
@@ -61,7 +61,7 @@ class ProfileData {
             this.data = JSONUtils.convertJsonObjectToNestedMap(jsonObject);
             return true;
         } catch (JSONException e) {
-            Log.error(LOG_TAG, "Could not load persistent profile data: %s", e);
+            Log.error(UserProfileConstants.LOG_TAG, CLASS_NAME, "Could not load persistent profile data: %s", e);
             return false;
         }
     }
@@ -76,10 +76,10 @@ class ProfileData {
             if (namedCollection == null) return false;
             String json = new JSONObject(data).toString();
             namedCollection.setString(KEY_USER_PROFILE, json);
-            Log.trace(LOG_TAG, "Profile Data is persisted : %s", json);
+            Log.trace(UserProfileConstants.LOG_TAG, CLASS_NAME, "Profile Data is persisted : %s", json);
             return true;
         } catch (Exception e) {
-            Log.error(LOG_TAG, "Profile Data is not persisted : %s", e);
+            Log.error(UserProfileConstants.LOG_TAG, CLASS_NAME, "Profile Data is not persisted : %s", e);
             return false;
         }
     }

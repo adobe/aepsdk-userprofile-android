@@ -12,7 +12,7 @@ package com.adobe.marketing.mobile.userprofile;
 
 import androidx.annotation.NonNull;
 
-import com.adobe.marketing.mobile.Log;
+import com.adobe.marketing.mobile.services.Log;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -22,7 +22,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 class JSONUtils {
-    private static final String LOG_TAG = "JSONUtils";
+    private static final String CLASS_NAME = "JSONUtils";
 
     /**
      * Converts a {@link JSONObject} to a nested {@link Map}
@@ -41,12 +41,12 @@ class JSONUtils {
                     JSONObject nestedJsonObject = (JSONObject) value;
                     map.put(key, convertJsonObjectToNestedMap(nestedJsonObject));
                 } else if (value instanceof JSONArray) {
-                    Log.error(LOG_TAG, "Profile Data doesn't support Array value.");
+                    Log.error(UserProfileConstants.LOG_TAG, CLASS_NAME, "Profile Data doesn't support Array value.");
                 } else {
                     map.put(key, value);
                 }
             } catch (Exception e) {
-                Log.error(LOG_TAG, "The value of [%s] is not supported: %s", key, e);
+                Log.error(UserProfileConstants.LOG_TAG, CLASS_NAME, "The value of [%s] is not supported: %s", key, e);
             }
         }
         return map;

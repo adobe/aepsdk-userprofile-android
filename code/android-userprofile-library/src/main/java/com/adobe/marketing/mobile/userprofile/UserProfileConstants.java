@@ -11,6 +11,7 @@
 package com.adobe.marketing.mobile.userprofile;
 
 public final class UserProfileConstants {
+    public static final String LOG_TAG = "UserProfile";
     static final String FRIENDLY_NAME = "UserProfile";
     static final String MODULE_NAME = "com.adobe.module.userProfile";
 

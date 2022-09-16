@@ -18,11 +18,11 @@ import com.adobe.marketing.mobile.EventSource;
 import com.adobe.marketing.mobile.EventType;
 import com.adobe.marketing.mobile.Extension;
 import com.adobe.marketing.mobile.ExtensionApi;
-import com.adobe.marketing.mobile.Log;
 import com.adobe.marketing.mobile.UserProfile;
-import com.adobe.marketing.mobile.internal.utility.StringUtils;
-import com.adobe.marketing.mobile.utils.DataReader;
-import com.adobe.marketing.mobile.utils.DataReaderException;
+import com.adobe.marketing.mobile.internal.util.StringUtils;
+import com.adobe.marketing.mobile.services.Log;
+import com.adobe.marketing.mobile.util.DataReader;
+import com.adobe.marketing.mobile.util.DataReaderException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,7 +56,7 @@ import java.util.Map;
  */
 public class UserProfileExtension extends Extension {
 
-    static final String LOG_TAG = "UserProfileExtension";
+    static final String CLASS_NAME = "UserProfileExtension";
     private ProfileData profileData;
 
     protected UserProfileExtension(ExtensionApi extensionApi) {
@@ -103,13 +103,13 @@ public class UserProfileExtension extends Extension {
 
     void handleProfileRequestEvent(@NonNull final Event event) {
         if (profileData == null) {
-            Log.debug(LOG_TAG, "Unable to work with Persisted profile data.");
+            Log.debug(UserProfileConstants.LOG_TAG, CLASS_NAME, "Unable to work with Persisted profile data.");
             return;
         }
         Map<String, Object> eventData = event.getEventData();
 
         if (eventData == null) {
-            Log.debug(UserProfileExtension.LOG_TAG, "Unexpected Null Value (Event data). Ignoring event");
+            Log.debug(UserProfileConstants.LOG_TAG, CLASS_NAME, "Unexpected Null Value (Event data). Ignoring event");
             return;
         }
 
@@ -118,25 +118,25 @@ public class UserProfileExtension extends Extension {
         } else if (eventData.containsKey(UserProfileConstants.EventDataKeys.UserProfile.GET_DATA_ATTRIBUTES)) {
             handleProfileGetAttributesEvent(event);
         } else {
-            Log.debug(UserProfileExtension.LOG_TAG, "No update/get request key in eventData. Ignoring event");
+            Log.debug(UserProfileConstants.LOG_TAG, CLASS_NAME, "No update/get request key in eventData. Ignoring event");
         }
     }
 
     void handleProfileResetEvent(@NonNull final Event event) {
         if (profileData == null) {
-            Log.debug(LOG_TAG, "Unable to work with Persisted profile data.");
+            Log.debug(UserProfileConstants.LOG_TAG, CLASS_NAME, "Unable to work with Persisted profile data.");
             return;
         }
         Map<String, Object> eventData = event.getEventData();
 
         if (eventData == null) {
-            Log.debug(UserProfileExtension.LOG_TAG,
+            Log.debug(UserProfileConstants.LOG_TAG, CLASS_NAME,
                     "Unexpected Null Value (event data), discarding the user profile request reset event.");
             return;
         }
 
         if (!eventData.containsKey(UserProfileConstants.EventDataKeys.UserProfile.REMOVE_DATA_KEYS)) {
-            Log.debug(UserProfileExtension.LOG_TAG, "No remove request key in eventData. Ignoring event");
+            Log.debug(UserProfileConstants.LOG_TAG, CLASS_NAME, "No remove request key in eventData. Ignoring event");
             return;
         }
         handleProfileDeleteEvent(event);
@@ -160,7 +160,7 @@ public class UserProfileExtension extends Extension {
                 updateProfilesAndDispatchSharedState(profileAttributes, event);
             }
         } catch (Exception e) {
-            Log.error(LOG_TAG, "Could not extract the profile update request data from the Event.");
+            Log.error(UserProfileConstants.LOG_TAG, CLASS_NAME, "Could not extract the profile update request data from the Event.");
         }
     }
 
@@ -187,10 +187,10 @@ public class UserProfileExtension extends Extension {
                 return;
             }
         } catch (DataReaderException e) {
-            Log.error(LOG_TAG, "Could not extract the profile request data from the Event - (%s)", e);
+            Log.error(UserProfileConstants.LOG_TAG, CLASS_NAME, "Could not extract the profile request data from the Event - (%s)", e);
             return;
         } catch (Exception e) {
-            Log.error(LOG_TAG, "Could not find specific data from persisted profile data - (%s)", e);
+            Log.error(UserProfileConstants.LOG_TAG, CLASS_NAME, "Could not find specific data from persisted profile data - (%s)", e);
             return;
         }
 
@@ -222,7 +222,7 @@ public class UserProfileExtension extends Extension {
                 deleteProfileAndDispatchSharedState(deleteKeys, event);
             }
         } catch (Exception e) {
-            Log.error(LOG_TAG, "Could not extract the profile request data from the Event - (%s)", e);
+            Log.error(UserProfileConstants.LOG_TAG, CLASS_NAME, "Could not extract the profile request data from the Event - (%s)", e);
         }
     }
 
@@ -241,7 +241,7 @@ public class UserProfileExtension extends Extension {
      */
     void handleRulesEvent(@NonNull final Event event) {
         if (profileData == null) {
-            Log.debug(LOG_TAG, "Unable to work with Persisted profile data.");
+            Log.debug(UserProfileConstants.LOG_TAG, CLASS_NAME, "Unable to work with Persisted profile data.");
             return;
         }
         try {
@@ -261,11 +261,11 @@ public class UserProfileExtension extends Extension {
                     UserProfileConstants.EventDataKeys.RuleEngine.CONSEQUENCE_JSON_DETAIL);
 
             if (consequenceDetail == null || consequenceDetail.isEmpty()) {
-                Log.debug(UserProfileExtension.LOG_TAG,
+                Log.debug(UserProfileConstants.LOG_TAG, CLASS_NAME,
                         "Unable to process UserProfileExtension Consequence. Invalid detail provided for consequence id (%s)", consequenceId);
                 return;
             }
-            Log.debug(UserProfileExtension.LOG_TAG,
+            Log.debug(UserProfileConstants.LOG_TAG, CLASS_NAME,
                     "Processing UserProfileExtension Consequence with id (%s)", consequenceId);
             String operation = DataReader.getString(consequenceDetail,
                     UserProfileConstants.EventDataKeys.UserProfile.CONSEQUENCE_OPERATION);
@@ -275,10 +275,10 @@ public class UserProfileExtension extends Extension {
             } else if (UserProfileConstants.EventDataKeys.RuleEngine.CONSEQUENCE_OPERATION_DELETE.equals(operation)) {
                 handleDeleteConsequence(consequenceDetail, event);
             } else {
-                Log.debug(LOG_TAG, "Invalid UserProfileExtension consequence operation");
+                Log.debug(UserProfileConstants.LOG_TAG, CLASS_NAME, "Invalid UserProfileExtension consequence operation");
             }
         } catch (Exception exp) {
-            Log.error(UserProfileExtension.LOG_TAG,
+            Log.error(UserProfileConstants.LOG_TAG, CLASS_NAME,
                     "Could not extract the consequence information from the rules response event - (%s)",
                     exp);
         }
@@ -300,7 +300,7 @@ public class UserProfileExtension extends Extension {
             String writeKey = DataReader.getString(consequenceDetails, UserProfileConstants.EventDataKeys.UserProfile.CONSEQUENCE_KEY);
             Object writeValue = consequenceDetails.get(UserProfileConstants.EventDataKeys.UserProfile.CONSEQUENCE_VALUE);
             if (StringUtils.isNullOrEmpty(writeKey)) {
-                Log.debug(LOG_TAG, "Invalid write key from the user profile consequence");
+                Log.debug(UserProfileConstants.LOG_TAG, CLASS_NAME, "Invalid write key from the user profile consequence");
                 return;
             }
             Object updatedWriteValue = (writeValue == null) ? null : replaceValueForIAMKey(writeKey, writeValue);
@@ -308,7 +308,7 @@ public class UserProfileExtension extends Extension {
             profileAttribute.put(writeKey, updatedWriteValue);
             updateProfilesAndDispatchSharedState(profileAttribute, event);
         } catch (Exception e) {
-            Log.error(LOG_TAG, "Could not extract the profile update request data from the rule consequence details.");
+            Log.error(UserProfileConstants.LOG_TAG, CLASS_NAME, "Could not extract the profile update request data from the rule consequence details.");
         }
     }
 
@@ -327,14 +327,14 @@ public class UserProfileExtension extends Extension {
             String deleteKey = DataReader.getString(consequenceDetails,
                     UserProfileConstants.EventDataKeys.UserProfile.CONSEQUENCE_KEY);
             if (StringUtils.isNullOrEmpty(deleteKey)) {
-                Log.debug(LOG_TAG, "Invalid delete key from the user profile consequence");
+                Log.debug(UserProfileConstants.LOG_TAG, CLASS_NAME, "Invalid delete key from the user profile consequence");
                 return;
             }
             List<String> profileKeys = new ArrayList<>(1);
             profileKeys.add(deleteKey);
             deleteProfileAndDispatchSharedState(profileKeys, event);
         } catch (Exception e) {
-            Log.error(LOG_TAG, "Could not extract the profile update request data from the rule consequence details.");
+            Log.error(UserProfileConstants.LOG_TAG, CLASS_NAME, "Could not extract the profile update request data from the rule consequence details.");
         }
     }
 
@@ -453,7 +453,7 @@ public class UserProfileExtension extends Extension {
             try {
                 profileData = new ProfileData();
             } catch (MissingPlatformServicesException e) {
-                Log.debug(LOG_TAG, "Unable to work with Persisted profile data - (%s)", e);
+                Log.debug(UserProfileConstants.LOG_TAG, CLASS_NAME, "Unable to work with Persisted profile data - (%s)", e);
                 return false;
             }
             return profileData.loadPersistenceData();
