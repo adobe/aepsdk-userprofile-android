@@ -67,7 +67,7 @@ public class UserProfileExtensionTests {
                     when(mock.getMap()).thenReturn(data);
                     when(mock.loadPersistenceData()).thenReturn(true);
                 })) {
-            userProfileExtension.readyForEvent(null);
+            userProfileExtension.onRegistered();
             // verify loading the stored data from the shared preference.
             // 1. initialized a PersistentProfileData instance.
             assertEquals(1, profileDataMocks.constructed().size());
@@ -101,7 +101,7 @@ public class UserProfileExtensionTests {
                     when(mock.loadPersistenceData()).thenReturn(true);
                     when(mock.persist()).thenReturn(true);
                 })) {
-            userProfileExtension.readyForEvent(null);
+            userProfileExtension.onRegistered();
             userProfileExtension.handleProfileUpdateEvent(updateProfileEvent);
             // verify loading the stored data from the shared preference.
             // 1. initialized a PersistentProfileData instance.
@@ -111,7 +111,7 @@ public class UserProfileExtensionTests {
             verify(profileDataMocks.constructed().get(0), times(1)).loadPersistenceData();
             verify(profileDataMocks.constructed().get(0), times(1)).updateOrDelete(updateProfileMapCaptor.capture());
             verify(profileDataMocks.constructed().get(0), times(1)).persist();
-            verify(profileDataMocks.constructed().get(0), times(1)).getMap();
+            verify(profileDataMocks.constructed().get(0), times(3)).getMap();
             assertEquals(data, updateProfileMapCaptor.getValue());
             // 3. a shared state for UserProfile extension was created and an Event was dispatched with the loaded profile data.
             verifySharedSateAndDispatchedEvent(updateProfileEvent, data);
@@ -148,7 +148,7 @@ public class UserProfileExtensionTests {
                     when(mock.loadPersistenceData()).thenReturn(true);
                     when(mock.persist()).thenReturn(true);
                 })) {
-            userProfileExtension.readyForEvent(null);
+            userProfileExtension.onRegistered();
             userProfileExtension.handleProfileUpdateEvent(updateProfileEvent);
             // verify loading the stored data from the shared preference.
             // 1. initialized a PersistentProfileData instance.
@@ -158,7 +158,7 @@ public class UserProfileExtensionTests {
             verify(profileDataMocks.constructed().get(0), times(1)).loadPersistenceData();
             verify(profileDataMocks.constructed().get(0), times(1)).updateOrDelete(updateProfileMapCaptor.capture());
             verify(profileDataMocks.constructed().get(0), times(1)).persist();
-            verify(profileDataMocks.constructed().get(0), times(1)).getMap();
+            verify(profileDataMocks.constructed().get(0), times(3)).getMap();
             assertEquals(data, updateProfileMapCaptor.getValue());
             // 3. a shared state for UserProfile extension was created and an Event was dispatched with the loaded profile data.
             verifySharedSateAndDispatchedEvent(updateProfileEvent, profileMap);
@@ -224,7 +224,7 @@ public class UserProfileExtensionTests {
                 })) {
             ArgumentCaptor<Event> eventCaptor = ArgumentCaptor.forClass(Event.class);
             doNothing().when(extensionApiMock).dispatch(eventCaptor.capture());
-            userProfileExtension.readyForEvent(null);
+            userProfileExtension.onRegistered();
             userProfileExtension.handleProfileGetAttributesEvent(getProfileEvent);
             // verify loading the stored data from the shared preference.
             // 1. initialized a PersistentProfileData instance.
@@ -276,7 +276,7 @@ public class UserProfileExtensionTests {
                 })) {
             ArgumentCaptor<Event> eventCaptor = ArgumentCaptor.forClass(Event.class);
             doNothing().when(extensionApiMock).dispatch(eventCaptor.capture());
-            userProfileExtension.readyForEvent(null);
+            userProfileExtension.onRegistered();
             userProfileExtension.handleProfileGetAttributesEvent(getProfileEvent);
             // verify loading the stored data from the shared preference.
             // 1. initialized a PersistentProfileData instance.
@@ -316,7 +316,7 @@ public class UserProfileExtensionTests {
                 })) {
             ArgumentCaptor<Event> eventCaptor = ArgumentCaptor.forClass(Event.class);
             doNothing().when(extensionApiMock).dispatch(eventCaptor.capture());
-            userProfileExtension.readyForEvent(null);
+            userProfileExtension.onRegistered();
             userProfileExtension.handleProfileGetAttributesEvent(getProfileEvent);
             // verify loading the stored data from the shared preference.
             // 1. initialized a PersistentProfileData instance.
@@ -378,7 +378,7 @@ public class UserProfileExtensionTests {
                     when(mock.loadPersistenceData()).thenReturn(true);
                     when(mock.persist()).thenReturn(true);
                 })) {
-            userProfileExtension.readyForEvent(null);
+            userProfileExtension.onRegistered();
             userProfileExtension.handleProfileDeleteEvent(removeProfileEvent);
             // verify loading the stored data from the shared preference.
             // 1. initialized a PersistentProfileData instance.
@@ -388,7 +388,7 @@ public class UserProfileExtensionTests {
             verify(profileDataMocks.constructed().get(0), times(1)).loadPersistenceData();
             verify(profileDataMocks.constructed().get(0), times(1)).delete(listCaptor.capture());
             verify(profileDataMocks.constructed().get(0), times(1)).persist();
-            verify(profileDataMocks.constructed().get(0), times(1)).getMap();
+            verify(profileDataMocks.constructed().get(0), times(3)).getMap();
             assertEquals(keys, listCaptor.getValue());
             // 3. a shared state for UserProfile extension was created and an Event was dispatched with the loaded profile data.
             verifySharedSateAndDispatchedEvent(removeProfileEvent, data);
@@ -444,13 +444,14 @@ public class UserProfileExtensionTests {
                 put("key", "value");
             }
         };
+
         try (MockedConstruction<ProfileData> profileDataMocks = mockConstruction(ProfileData.class,
                 (mock, context) -> {
                     when(mock.getMap()).thenReturn(data);
                     when(mock.loadPersistenceData()).thenReturn(true);
                     when(mock.persist()).thenReturn(true);
                 })) {
-            userProfileExtension.readyForEvent(null);
+            userProfileExtension.onRegistered();
             userProfileExtension.handleRulesEvent(ruleConsequenceEvent);
             // verify loading the stored data from the shared preference.
             // 1. initialized a PersistentProfileData instance.
@@ -460,7 +461,7 @@ public class UserProfileExtensionTests {
             verify(profileDataMocks.constructed().get(0), times(1)).loadPersistenceData();
             verify(profileDataMocks.constructed().get(0), times(1)).updateOrDelete(updateProfileMapCaptor.capture());
             verify(profileDataMocks.constructed().get(0), times(1)).persist();
-            verify(profileDataMocks.constructed().get(0), times(1)).getMap();
+            verify(profileDataMocks.constructed().get(0), times(3)).getMap();
             assertEquals(data, updateProfileMapCaptor.getValue());
             // 3. a shared state for UserProfile extension was created and an Event was dispatched with the loaded profile data.
             verifySharedSateAndDispatchedEvent(ruleConsequenceEvent, data);
@@ -505,7 +506,7 @@ public class UserProfileExtensionTests {
                     when(mock.loadPersistenceData()).thenReturn(true);
                     when(mock.persist()).thenReturn(true);
                 })) {
-            userProfileExtension.readyForEvent(null);
+            userProfileExtension.onRegistered();
             userProfileExtension.handleRulesEvent(ruleConsequenceEvent);
             // verify loading the stored data from the shared preference.
             // 1. initialized a PersistentProfileData instance.
@@ -515,7 +516,7 @@ public class UserProfileExtensionTests {
             verify(profileDataMocks.constructed().get(0), times(1)).loadPersistenceData();
             verify(profileDataMocks.constructed().get(0), times(1)).updateOrDelete(updateProfileMapCaptor.capture());
             verify(profileDataMocks.constructed().get(0), times(1)).persist();
-            verify(profileDataMocks.constructed().get(0), times(1)).getMap();
+            verify(profileDataMocks.constructed().get(0), times(3)).getMap();
             assertEquals(data, updateProfileMapCaptor.getValue());
             // 3. a shared state for UserProfile extension was created and an Event was dispatched with the loaded profile data.
             verifySharedSateAndDispatchedEvent(ruleConsequenceEvent, data);
@@ -560,7 +561,7 @@ public class UserProfileExtensionTests {
                     when(mock.loadPersistenceData()).thenReturn(true);
                     when(mock.persist()).thenReturn(true);
                 })) {
-            userProfileExtension.readyForEvent(null);
+            userProfileExtension.onRegistered();
             userProfileExtension.handleRulesEvent(ruleConsequenceEvent);
             // verify loading the stored data from the shared preference.
             // 1. initialized a PersistentProfileData instance.
@@ -570,7 +571,7 @@ public class UserProfileExtensionTests {
             verify(profileDataMocks.constructed().get(0), times(1)).loadPersistenceData();
             verify(profileDataMocks.constructed().get(0), times(1)).updateOrDelete(updateProfileMapCaptor.capture());
             verify(profileDataMocks.constructed().get(0), times(1)).persist();
-            verify(profileDataMocks.constructed().get(0), times(1)).getMap();
+            verify(profileDataMocks.constructed().get(0), times(3)).getMap();
             assertEquals(data, updateProfileMapCaptor.getValue());
             // 3. a shared state for UserProfile extension was created and an Event was dispatched with the loaded profile data.
             verifySharedSateAndDispatchedEvent(ruleConsequenceEvent, data);
@@ -615,7 +616,7 @@ public class UserProfileExtensionTests {
                     when(mock.loadPersistenceData()).thenReturn(true);
                     when(mock.persist()).thenReturn(true);
                 })) {
-            userProfileExtension.readyForEvent(null);
+            userProfileExtension.onRegistered();
             userProfileExtension.handleRulesEvent(ruleConsequenceEvent);
             // verify loading the stored data from the shared preference.
             // 1. initialized a PersistentProfileData instance.
@@ -625,7 +626,7 @@ public class UserProfileExtensionTests {
             verify(profileDataMocks.constructed().get(0), times(1)).loadPersistenceData();
             verify(profileDataMocks.constructed().get(0), times(1)).updateOrDelete(updateProfileMapCaptor.capture());
             verify(profileDataMocks.constructed().get(0), times(1)).persist();
-            verify(profileDataMocks.constructed().get(0), times(1)).getMap();
+            verify(profileDataMocks.constructed().get(0), times(3)).getMap();
             assertEquals(data, updateProfileMapCaptor.getValue());
             // 3. a shared state for UserProfile extension was created and an Event was dispatched with the loaded profile data.
             verifySharedSateAndDispatchedEvent(ruleConsequenceEvent, data);
@@ -675,7 +676,7 @@ public class UserProfileExtensionTests {
                         }
                     });
                 })) {
-            userProfileExtension.readyForEvent(null);
+            userProfileExtension.onRegistered();
             userProfileExtension.handleRulesEvent(ruleConsequenceEvent);
             assertEquals(1, profileDataMocks.constructed().size());
             // 2. loadPersistenceData()/updateOrDelete()/persist() were called.
@@ -683,7 +684,7 @@ public class UserProfileExtensionTests {
             verify(profileDataMocks.constructed().get(0), times(1)).loadPersistenceData();
             verify(profileDataMocks.constructed().get(0), times(1)).updateOrDelete(updateProfileMapCaptor.capture());
             verify(profileDataMocks.constructed().get(0), times(1)).persist();
-            verify(profileDataMocks.constructed().get(0), times(1)).getMap();
+            verify(profileDataMocks.constructed().get(0), times(3)).getMap();
             assertEquals(data, updateProfileMapCaptor.getValue());
             // 3. a shared state for UserProfile extension was created and an Event was dispatched with the loaded profile data.
             verifySharedSateAndDispatchedEvent(ruleConsequenceEvent, data);
@@ -724,7 +725,7 @@ public class UserProfileExtensionTests {
                     when(mock.loadPersistenceData()).thenReturn(true);
                     when(mock.persist()).thenReturn(true);
                 })) {
-            userProfileExtension.readyForEvent(null);
+            userProfileExtension.onRegistered();
             userProfileExtension.handleRulesEvent(ruleConsequenceEvent);
             // verify loading the stored data from the shared preference.
             // 1. initialized a PersistentProfileData instance.
@@ -734,7 +735,7 @@ public class UserProfileExtensionTests {
             verify(profileDataMocks.constructed().get(0), times(1)).loadPersistenceData();
             verify(profileDataMocks.constructed().get(0), times(1)).updateOrDelete(updateProfileMapCaptor.capture());
             verify(profileDataMocks.constructed().get(0), times(1)).persist();
-            verify(profileDataMocks.constructed().get(0), times(1)).getMap();
+            verify(profileDataMocks.constructed().get(0), times(3)).getMap();
             assertEquals(new HashMap<String, Object>() {
                 {
                     put("key1", null);
@@ -778,7 +779,7 @@ public class UserProfileExtensionTests {
                     when(mock.loadPersistenceData()).thenReturn(true);
                     when(mock.persist()).thenReturn(true);
                 })) {
-            userProfileExtension.readyForEvent(null);
+            userProfileExtension.onRegistered();
             userProfileExtension.handleRulesEvent(ruleConsequenceEvent);
             // verify loading the stored data from the shared preference.
             // 1. initialized a PersistentProfileData instance.
@@ -788,7 +789,7 @@ public class UserProfileExtensionTests {
             verify(profileDataMocks.constructed().get(0), times(1)).loadPersistenceData();
             verify(profileDataMocks.constructed().get(0), times(1)).delete(listCaptor.capture());
             verify(profileDataMocks.constructed().get(0), times(1)).persist();
-            verify(profileDataMocks.constructed().get(0), times(1)).getMap();
+            verify(profileDataMocks.constructed().get(0), times(3)).getMap();
             List<String> keys = Collections.singletonList("key1");
             assertEquals(keys, listCaptor.getValue());
             // 3. a shared state for UserProfile extension was created and an Event was dispatched with the loaded profile data.
@@ -822,9 +823,9 @@ public class UserProfileExtensionTests {
     private void verifySharedSateAndDispatchedEvent(Event triggerEvent, Map<String, Object> eventData) {
         ArgumentCaptor<Map> mapCaptor = ArgumentCaptor.forClass(Map.class);
         ArgumentCaptor<Event> eventCaptor = ArgumentCaptor.forClass(Event.class);
-        verify(extensionApiMock, times(1)).createSharedState(mapCaptor.capture(), eventCaptor.capture());
+        verify(extensionApiMock, times(2)).createSharedState(mapCaptor.capture(), eventCaptor.capture());
         ArgumentCaptor<Event> eventCaptor2 = ArgumentCaptor.forClass(Event.class);
-        verify(extensionApiMock, times(1)).dispatch(eventCaptor2.capture());
+        verify(extensionApiMock, times(2)).dispatch(eventCaptor2.capture());
         Object profileData = mapCaptor.getValue().get("userprofiledata");
         assertTrue(profileData instanceof Map);
         assertEquals(eventData, ((Map<?, ?>) profileData));

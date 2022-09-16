@@ -14,6 +14,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 
 import com.adobe.marketing.mobile.userprofile.UserProfileExtension;
 
@@ -40,25 +42,11 @@ public class PublicAPITests {
 
     @SuppressWarnings("ConstantConditions")
     @Before
-    public void setup() throws NoSuchFieldException, IllegalAccessException {
-        Field extensionIsRegisteredField = UserProfile.class.getDeclaredField("extensionIsRegistered");
-        extensionIsRegisteredField.setAccessible(true);
-        AtomicBoolean extensionIsRegistered = (AtomicBoolean) extensionIsRegisteredField.get(null);
-        extensionIsRegistered.set(false);
+    public void setup() {
     }
 
-    private void makeExtensionRegistered() {
-        try {
-            Field extensionIsRegisteredField = UserProfile.class.getDeclaredField("extensionIsRegistered");
-            extensionIsRegisteredField.setAccessible(true);
-            AtomicBoolean extensionIsRegistered = (AtomicBoolean) extensionIsRegisteredField.get(null);
-            extensionIsRegistered.set(true);
-        } catch (Exception e) {
-            Assert.fail(e.getMessage());
-        }
-    }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings("rawtypes")
     @Test
     public void test_registerExtension() throws Exception {
         try (MockedStatic<MobileCore> mobileCoreMockedStatic = Mockito.mockStatic(MobileCore.class)) {
@@ -75,51 +63,13 @@ public class PublicAPITests {
             // verify: happy
             assertNotNull(callbackCaptor.getValue());
             assertEquals(UserProfileExtension.class, extensionClassCaptor.getValue());
-            Field extensionIsRegisteredField = UserProfile.class.getDeclaredField("extensionIsRegistered");
-            extensionIsRegisteredField.setAccessible(true);
-            AtomicBoolean extensionIsRegistered = (AtomicBoolean) extensionIsRegisteredField.get(null);
-            assertTrue(extensionIsRegistered.get());
             // verify: error callback was called
             callbackCaptor.getValue().error(ExtensionError.UNEXPECTED_ERROR);
-            assertFalse(extensionIsRegistered.get());
         }
     }
 
-    @Test
-    public void test_APIs_whenExtensionIsNotRegistered() throws InterruptedException {
-        try (MockedStatic<MobileCore> mobileCoreMockedStatic = Mockito.mockStatic(MobileCore.class)) {
-            mobileCoreMockedStatic.reset();
-            UserProfile.updateUserAttribute("key", "value");
-            UserProfile.updateUserAttributes(new HashMap<String, Object>() {
-                {
-                    put("Key1", "Value1");
-                    put("Key2", "Value2");
-                }
-            });
-            UserProfile.removeUserAttribute("key");
-            UserProfile.removeUserAttributes(Arrays.asList("key1", "key2"));
-            final CountDownLatch latch = new CountDownLatch(1);
-            UserProfile.getUserAttributes(Arrays.asList("key1", "key2"), new AdobeCallbackWithError<Map<String, Object>>() {
-                @Override
-                public void fail(AdobeError adobeError) {
-                    assertEquals(AdobeError.EXTENSION_NOT_INITIALIZED, adobeError);
-                    latch.countDown();
-                }
-
-                @Override
-                public void call(Map<String, Object> stringObjectMap) {
-                    Assert.fail();
-                }
-            });
-            latch.await();
-            mobileCoreMockedStatic.verifyNoInteractions();
-        }
-    }
-
-    @SuppressWarnings({"rawtypes", "unchecked"})
     @Test
     public void test_updateUserAttributes() {
-        makeExtensionRegistered();
         try (MockedStatic<MobileCore> mobileCoreMockedStatic = Mockito.mockStatic(MobileCore.class)) {
             mobileCoreMockedStatic.reset();
             ArgumentCaptor<Event> eventCaptor = ArgumentCaptor.forClass(Event.class);
@@ -142,10 +92,9 @@ public class PublicAPITests {
         }
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
+
     @Test
     public void test_updateUserAttribute() {
-        makeExtensionRegistered();
         try (MockedStatic<MobileCore> mobileCoreMockedStatic = Mockito.mockStatic(MobileCore.class)) {
             mobileCoreMockedStatic.reset();
             ArgumentCaptor<Event> eventCaptor = ArgumentCaptor.forClass(Event.class);
@@ -166,10 +115,9 @@ public class PublicAPITests {
         }
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
+
     @Test
     public void test_removeUserAttribute() {
-        makeExtensionRegistered();
         try (MockedStatic<MobileCore> mobileCoreMockedStatic = Mockito.mockStatic(MobileCore.class)) {
             mobileCoreMockedStatic.reset();
             ArgumentCaptor<Event> eventCaptor = ArgumentCaptor.forClass(Event.class);
@@ -186,10 +134,8 @@ public class PublicAPITests {
         }
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
     @Test
     public void test_removeUserAttributes() {
-        makeExtensionRegistered();
         try (MockedStatic<MobileCore> mobileCoreMockedStatic = Mockito.mockStatic(MobileCore.class)) {
             mobileCoreMockedStatic.reset();
             ArgumentCaptor<Event> eventCaptor = ArgumentCaptor.forClass(Event.class);
@@ -207,10 +153,8 @@ public class PublicAPITests {
         }
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
     @Test
     public void test_getUserAttributes() {
-        makeExtensionRegistered();
         try (MockedStatic<MobileCore> mobileCoreMockedStatic = Mockito.mockStatic(MobileCore.class)) {
             mobileCoreMockedStatic.reset();
             ArgumentCaptor<Event> eventCaptor = ArgumentCaptor.forClass(Event.class);
@@ -224,7 +168,7 @@ public class PublicAPITests {
                 public void call(Map<String, Object> stringObjectMap) {
                 }
             });
-            mobileCoreMockedStatic.verify(() -> MobileCore.dispatchEvent(eventCaptor.capture()));
+            mobileCoreMockedStatic.verify(() -> MobileCore.dispatchEventWithResponseCallback(eventCaptor.capture(), anyLong(), any()));
             Event dispatchedEvent = eventCaptor.getValue();
             assertNotNull(dispatchedEvent);
             assertEquals("getUserAttributes", dispatchedEvent.getName());

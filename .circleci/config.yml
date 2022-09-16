@@ -36,6 +36,10 @@ jobs:
           post-emulator-launch-assemble-command: ""
           restore-gradle-cache-prefix: v1a
       - run:
+          name: unit test
+          command: |
+            make unit-test
+      - run:
           name: functional test
           command: |
             make functional-test

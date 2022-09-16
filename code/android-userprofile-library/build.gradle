@@ -53,7 +53,8 @@ tasks.withType(Test) {
 }
 
 task codeCoverageReport(type: JacocoReport, dependsOn: ['testPhoneDebugUnitTest', 'createPhoneDebugCoverageReport']) {
-    def debugTree = fileTree(dir: "${project.buildDir}/intermediates/javac/phoneDebug/classes")
+    def excludeRegex = ['**/ADB*.class', '**/BuildConfig.class']
+    def debugTree = fileTree(dir: "${project.buildDir}/intermediates/javac/phoneDebug/classes", excludes: excludeRegex)
 
     additionalClassDirs.setFrom files([debugTree])
     additionalSourceDirs.setFrom files(android.sourceSets.phone.java.sourceFiles)
