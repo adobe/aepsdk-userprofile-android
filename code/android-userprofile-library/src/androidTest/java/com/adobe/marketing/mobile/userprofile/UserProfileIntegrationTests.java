@@ -65,7 +65,7 @@ public class UserProfileIntegrationTests {
         //TODO: boot event is not dispatched???
     }
 
-    @Test(timeout = 100)
+    @Test(timeout = 1000)
     public void testUpdateUserAttributesWithAllSupportedTypes() throws InterruptedException {
         UserProfile.updateUserAttributes(
                 new HashMap<String, Object>() {
@@ -96,7 +96,7 @@ public class UserProfileIntegrationTests {
         getDataLatch.await();
     }
 
-    @Test(timeout = 100)
+    @Test(timeout = 1000)
     public void testUpdateUserAttributesWithNullValue() throws InterruptedException {
         UserProfile.updateUserAttributes(
                 new HashMap<String, Object>() {
@@ -134,7 +134,7 @@ public class UserProfileIntegrationTests {
         getDataLatch.await();
     }
 
-    @Test(timeout = 100)
+    @Test(timeout = 1000)
     public void testUpdateUserAttribute() throws InterruptedException {
         UserProfile.updateUserAttribute("key", "value");
 
@@ -151,7 +151,7 @@ public class UserProfileIntegrationTests {
         getDataLatch.await();
     }
 
-    @Test(timeout = 100)
+    @Test(timeout = 1000)
     public void testRemoveUserAttribute() throws InterruptedException {
         UserProfile.updateUserAttributes(
                 new HashMap<String, Object>() {
@@ -180,7 +180,7 @@ public class UserProfileIntegrationTests {
         getDataLatch.await();
     }
 
-    @Test(timeout = 100)
+    @Test(timeout = 1000)
     public void testRemoveUserAttributes() throws InterruptedException {
         UserProfile.updateUserAttributes(
                 new HashMap<String, Object>() {
@@ -207,7 +207,7 @@ public class UserProfileIntegrationTests {
         getDataLatch.await();
     }
 
-    @Test(timeout = 100)
+    @Test(timeout = 1000)
     public void testRulesConsequenceEventOperationWrite() throws InterruptedException {
         UserProfile.updateUserAttributes(
                 new HashMap<String, Object>() {
@@ -259,7 +259,7 @@ public class UserProfileIntegrationTests {
         getDataLatch.await();
     }
 
-    @Test(timeout = 100)
+    @Test(timeout = 1000)
     public void testRulesConsequenceEventOperationDelete() throws InterruptedException {
         UserProfile.updateUserAttributes(
                 new HashMap<String, Object>() {
