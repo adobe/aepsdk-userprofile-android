@@ -13,7 +13,7 @@ package com.adobe.marketing.mobile.userprofile;
 import com.adobe.marketing.mobile.Event;
 import com.adobe.marketing.mobile.Extension;
 import com.adobe.marketing.mobile.ExtensionApi;
-import com.adobe.marketing.mobile.Log;
+import com.adobe.marketing.mobile.services.Log;
 
 public class MonitorExtension extends Extension {
     /**
@@ -39,7 +39,7 @@ public class MonitorExtension extends Extension {
     }
 
     private void monitorProfileSharedState(Event event) {
-        Log.warning("x", "event: %s", event.toString());
+        Log.warning("MonitorExtension", "", "event: %s", event.toString());
     }
 
 }
