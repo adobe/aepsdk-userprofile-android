@@ -46,9 +46,8 @@ jobs:
               shasum -a $i -c --ignore-missing <(curl -s "https://raw.githubusercontent.com/codecov/codecov-bash/${VERSION}/SHA${i}SUM") ||
               shasum -a $i -c <(curl -s "https://raw.githubusercontent.com/codecov/codecov-bash/${VERSION}/SHA${i}SUM" | grep -w "codecov")
             done
-            bash ./codecov -v -X s3 -c -D "./code/android-userprofile-library/build/reports/jacoco/unitTestsCoverageReport" -F full-tests
-      - android/save-gradle-cache:
-          cache-prefix: v1a
+            bash ./codecov -v -X s3 -c -D "./code/android-userprofile-library/build/reports/jacoco/unitTestsCoverageReport/html" -F full-tests
+
   functional-test:
     
     executor:
