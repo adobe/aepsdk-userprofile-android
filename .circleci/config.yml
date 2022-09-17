@@ -43,6 +43,24 @@ jobs:
           name: functional test
           command: |
             make functional-test
+      - run:
+          name: code coverage
+          command: |
+            make code-coverage
+      - run:
+          name: Upload Code Coverage Report
+          command: |
+            curl -s https://codecov.io/bash > codecov;
+            VERSION=$(grep 'VERSION=\"[0-9\.]*\"' codecov | cut -d'"' -f2);
+            SHAVERSION=$(shasum -v);
+            echo "Using CodeCov version '$VERSION'"
+            echo "Using shasum '$SHAVERSION'"
+            for i in 1 256 512
+            do
+              shasum -a $i -c --ignore-missing <(curl -s "https://raw.githubusercontent.com/codecov/codecov-bash/${VERSION}/SHA${i}SUM") ||
+              shasum -a $i -c <(curl -s "https://raw.githubusercontent.com/codecov/codecov-bash/${VERSION}/SHA${i}SUM" | grep -w "codecov")
+            done
+            bash ./codecov -v -X s3 -c -D "./code/android-userprofile-library/build/reports/jacoco/codeCoverageReport" -F full-tests
       - android/save-gradle-cache:
           cache-prefix: v1a
 
