@@ -48,6 +48,11 @@ public class ProfileDataTests {
         profileData = new ProfileData(namedCollection);
     }
 
+    @Test(expected = MissingPlatformServicesException.class)
+    public void test_construction_withDataStoreServiceError() throws MissingPlatformServicesException {
+        profileData = new ProfileData();
+    }
+
     @Test
     public void test_loadPersistenceData() {
         ArgumentCaptor<String> keyCaptor = ArgumentCaptor.forClass(String.class);

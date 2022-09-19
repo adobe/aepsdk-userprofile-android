@@ -94,6 +94,12 @@ public class UserProfileExtensionTests {
     }
 
     @Test
+    public void test_onRegistered_notLoadLocalData() {
+        userProfileExtension.onRegistered();
+        verify(extensionApiMock, times(0)).dispatch(any());
+    }
+
+    @Test
     public void test_handleProfileRequestEvent_withoutInitializeProfileData() {
         Event event = new Event.Builder(
                 "UserProfileUpdate",
