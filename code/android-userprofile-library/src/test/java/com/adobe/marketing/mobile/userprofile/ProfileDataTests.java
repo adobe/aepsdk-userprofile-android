@@ -14,11 +14,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
 import com.adobe.marketing.mobile.services.NamedCollection;
+import com.adobe.marketing.mobile.services.ServiceProvider;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -27,7 +30,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
@@ -97,7 +102,7 @@ public class ProfileDataTests {
     }
 
     @Test
-    public void test_persist_fail() {
+    public void test_persist_withNullService() {
         profileData = new ProfileData(null);
         profileData.updateOrDelete(new HashMap<String, Object>() {
             {
@@ -106,6 +111,18 @@ public class ProfileDataTests {
         });
         assertFalse(profileData.persist());
     }
+
+    @Test
+    public void test_persist_withServiceError() {
+        profileData.updateOrDelete(new HashMap<String, Object>() {
+            {
+                put("key1", "value1");
+            }
+        });
+        doThrow(new RuntimeException("")).when(namedCollection).setString(any(), any());
+        assertFalse(profileData.persist());
+    }
+
 
     @Test(expected = UnsupportedOperationException.class)
     public void test_getMap_unmodified() {
@@ -156,6 +173,39 @@ public class ProfileDataTests {
                 put("key3", "value3");
             }
         }, profileData.getMap());
+    }
+
+    @Test
+    public void test_delete() {
+        Map<String, Object> profileMap1 = new HashMap<String, Object>() {
+            {
+                put("key1", "value1");
+                put("key2", "value2");
+            }
+        };
+        profileData.updateOrDelete(profileMap1);
+        assertEquals(profileMap1, profileData.getMap());
+        List<String> deletedKeys = new ArrayList<>();
+        deletedKeys.add("key2");
+        profileData.delete(deletedKeys);
+        assertEquals(new HashMap<String, Object>() {
+            {
+                put("key1", "value1");
+            }
+        }, profileData.getMap());
+    }
+
+    @Test
+    public void test_get() {
+        Map<String, Object> profileMap1 = new HashMap<String, Object>() {
+            {
+                put("key1", "value1");
+                put("key2", "value2");
+            }
+        };
+        profileData.updateOrDelete(profileMap1);
+        assertEquals(profileMap1, profileData.getMap());
+        assertEquals("value1", profileData.get("key1"));
     }
 
 }

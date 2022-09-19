@@ -11,6 +11,7 @@
 package com.adobe.marketing.mobile.userprofile;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -47,4 +48,11 @@ public class JSONUtilsTests {
         }, map.get("key2"));
     }
 
+    @Test
+    public void test_arrayAsValue() throws JSONException {
+        String json = "{\"key\":[\"Ford\",\"BMW\",\"Fiat\"]}";
+        JSONObject jsonObject = new JSONObject(json);
+        Map<String, Object> map = JSONUtils.convertJsonObjectToNestedMap(jsonObject);
+        assertTrue(map.isEmpty());
+    }
 }
