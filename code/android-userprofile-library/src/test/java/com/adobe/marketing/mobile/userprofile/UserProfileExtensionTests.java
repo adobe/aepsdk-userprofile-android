@@ -59,7 +59,23 @@ public class UserProfileExtensionTests {
     }
 
     @Test
-    public void test_readyForEvent() {
+    public void test_getVersion() {
+        assertEquals("2.0.0", userProfileExtension.getVersion());
+    }
+
+    @Test
+    public void test_getName() {
+        assertEquals("com.adobe.module.userProfile", userProfileExtension.getName());
+    }
+
+    @Test
+    public void test_getFriendlyName() {
+        assertEquals("UserProfile", userProfileExtension.getFriendlyName());
+    }
+
+
+    @Test
+    public void test_onRegistered() {
         Map<String, Object> data = new HashMap<>();
         data.put("key", "value");
         try (MockedConstruction<ProfileData> profileDataMocks = mockConstruction(ProfileData.class,
@@ -75,6 +91,154 @@ public class UserProfileExtensionTests {
             verify(profileDataMocks.constructed().get(0), times(1)).loadPersistenceData();
 
         }
+    }
+
+    @Test
+    public void test_onRegistered_notLoadLocalData() {
+        userProfileExtension.onRegistered();
+        verify(extensionApiMock, times(0)).dispatch(any());
+    }
+
+    @Test
+    public void test_handleProfileRequestEvent_withoutInitializeProfileData() {
+        Event event = new Event.Builder(
+                "UserProfileUpdate",
+                "com.adobe.eventType.userProfile",
+                "com.adobe.eventSource.requestProfile").build();
+        userProfileExtension.handleProfileRequestEvent(event);
+        verifyNoInteractions(extensionApiMock);
+    }
+
+    @Test
+    public void test_handleProfileResetEvent_withoutInitializeProfileData() {
+        Event event = new Event.Builder(
+                "UserProfileUpdate",
+                "com.adobe.eventType.userProfile",
+                "com.adobe.eventSource.requestReset").build();
+        userProfileExtension.handleProfileResetEvent(event);
+        verifyNoInteractions(extensionApiMock);
+    }
+
+    @Test
+    public void test_handleProfileRequestEvent_withEmptyEventData() {
+        Event event = new Event.Builder(
+                "UserProfileUpdate",
+                "com.adobe.eventType.userProfile",
+                "com.adobe.eventSource.requestProfile").build();
+        Map<String, Object> data = new HashMap<>();
+        data.put("key", "value");
+        try (MockedConstruction<ProfileData> profileDataMocks = mockConstruction(ProfileData.class,
+                (mock, context) -> {
+                    when(mock.getMap()).thenReturn(data);
+                    when(mock.loadPersistenceData()).thenReturn(true);
+                })) {
+            userProfileExtension.onRegistered();
+            // verify loading the stored data from the shared preference.
+            // 1. initialized a PersistentProfileData instance.
+            assertEquals(1, profileDataMocks.constructed().size());
+
+            reset(extensionApiMock);
+            userProfileExtension.handleProfileRequestEvent(event);
+            verifyNoInteractions(extensionApiMock);
+
+        }
+    }
+
+    @Test
+    public void test_handleProfileRequestEvent_withInvalidKey() {
+        Map<String, Object> eventDataMap = new HashMap<String, Object>() {
+            {
+                put("invalidKey", "");
+            }
+        };
+        Event event = new Event.Builder(
+                "UserProfileUpdate",
+                "com.adobe.eventType.userProfile",
+                "com.adobe.eventSource.requestProfile").setEventData(eventDataMap).build();
+        Map<String, Object> data = new HashMap<>();
+        data.put("key", "value");
+        try (MockedConstruction<ProfileData> profileDataMocks = mockConstruction(ProfileData.class,
+                (mock, context) -> {
+                    when(mock.getMap()).thenReturn(data);
+                    when(mock.loadPersistenceData()).thenReturn(true);
+                })) {
+            userProfileExtension.onRegistered();
+            // verify loading the stored data from the shared preference.
+            // 1. initialized a PersistentProfileData instance.
+            assertEquals(1, profileDataMocks.constructed().size());
+
+            reset(extensionApiMock);
+            userProfileExtension.handleProfileRequestEvent(event);
+            verifyNoInteractions(extensionApiMock);
+
+        }
+    }
+
+    @Test
+    public void test_handleProfileResetEvent_withInvalidKey() {
+        Map<String, Object> eventDataMap = new HashMap<String, Object>() {
+            {
+                put("invalidKey", "");
+            }
+        };
+        Event event = new Event.Builder(
+                "UserProfileUpdate",
+                "com.adobe.eventType.userProfile",
+                "com.adobe.eventSource.requestReset").setEventData(eventDataMap).build();
+        Map<String, Object> data = new HashMap<>();
+        data.put("key", "value");
+        try (MockedConstruction<ProfileData> profileDataMocks = mockConstruction(ProfileData.class,
+                (mock, context) -> {
+                    when(mock.getMap()).thenReturn(data);
+                    when(mock.loadPersistenceData()).thenReturn(true);
+                })) {
+            userProfileExtension.onRegistered();
+            // verify loading the stored data from the shared preference.
+            // 1. initialized a PersistentProfileData instance.
+            assertEquals(1, profileDataMocks.constructed().size());
+
+            reset(extensionApiMock);
+            userProfileExtension.handleProfileResetEvent(event);
+            verifyNoInteractions(extensionApiMock);
+
+        }
+    }
+
+    @Test
+    public void test_handleProfileResetEvent_withEmptyEventData() {
+        Event event = new Event.Builder(
+                "UserProfileUpdate",
+                "com.adobe.eventType.userProfile",
+                "com.adobe.eventSource.requestReset").build();
+        Map<String, Object> data = new HashMap<>();
+        data.put("key", "value");
+        try (MockedConstruction<ProfileData> profileDataMocks = mockConstruction(ProfileData.class,
+                (mock, context) -> {
+                    when(mock.getMap()).thenReturn(data);
+                    when(mock.loadPersistenceData()).thenReturn(true);
+                })) {
+            userProfileExtension.onRegistered();
+            reset(extensionApiMock);
+            userProfileExtension.handleProfileResetEvent(event);
+            verifyNoInteractions(extensionApiMock);
+        }
+
+    }
+
+
+    @Test
+    public void test_handleProfileDeleteEvent_withInvalidEventData() {
+        Event getProfileEvent = new Event.Builder(
+                "getUserAttributes",
+                "com.adobe.eventType.userProfile",
+                "com.adobe.eventSource.requestProfile")
+                .setEventData(new HashMap<String, Object>() {
+                    {
+                        put("userprofilegetattributes", "");
+                    }
+                }).build();
+        userProfileExtension.handleProfileDeleteEvent(getProfileEvent);
+        verifyNoInteractions(extensionApiMock);
     }
 
     @Test
@@ -102,7 +266,7 @@ public class UserProfileExtensionTests {
                     when(mock.persist()).thenReturn(true);
                 })) {
             userProfileExtension.onRegistered();
-            userProfileExtension.handleProfileUpdateEvent(updateProfileEvent);
+            userProfileExtension.handleProfileRequestEvent(updateProfileEvent);
             // verify loading the stored data from the shared preference.
             // 1. initialized a PersistentProfileData instance.
             assertEquals(1, profileDataMocks.constructed().size());
@@ -116,6 +280,22 @@ public class UserProfileExtensionTests {
             // 3. a shared state for UserProfile extension was created and an Event was dispatched with the loaded profile data.
             verifySharedSateAndDispatchedEvent(updateProfileEvent, data);
         }
+    }
+
+    @Test
+    public void test_handleProfileUpdateEvent_withInvalidEventData() {
+        Map<String, Object> eventDataMap = new HashMap<String, Object>() {
+            {
+                put("userprofileupdatekey", "");
+            }
+        };
+        //
+        Event updateProfileEvent = new Event.Builder(
+                "UserProfileUpdate",
+                "com.adobe.eventType.userProfile",
+                "com.adobe.eventSource.requestProfile").setEventData(eventDataMap).build();
+        userProfileExtension.handleProfileUpdateEvent(updateProfileEvent);
+        verifyNoInteractions(extensionApiMock);
     }
 
     @Test
@@ -189,6 +369,22 @@ public class UserProfileExtensionTests {
         }
     }
 
+
+    @Test
+    public void test_handleProfileGetAttributesEvent_withInvalidEventData() {
+        Event getProfileEvent = new Event.Builder(
+                "getUserAttributes",
+                "com.adobe.eventType.userProfile",
+                "com.adobe.eventSource.requestProfile")
+                .setEventData(new HashMap<String, Object>() {
+                    {
+                        put("userprofilegetattributes", "");
+                    }
+                }).build();
+        userProfileExtension.handleProfileGetAttributesEvent(getProfileEvent);
+        verifyNoInteractions(extensionApiMock);
+    }
+
     @Test
     public void test_handleProfileGetAttributesEvent() {
         List<String> keys = Arrays.asList("key1", "key2");
@@ -225,7 +421,7 @@ public class UserProfileExtensionTests {
             ArgumentCaptor<Event> eventCaptor = ArgumentCaptor.forClass(Event.class);
             doNothing().when(extensionApiMock).dispatch(eventCaptor.capture());
             userProfileExtension.onRegistered();
-            userProfileExtension.handleProfileGetAttributesEvent(getProfileEvent);
+            userProfileExtension.handleProfileRequestEvent(getProfileEvent);
             // verify loading the stored data from the shared preference.
             // 1. initialized a PersistentProfileData instance.
             assertEquals(1, profileDataMocks.constructed().size());
@@ -379,7 +575,7 @@ public class UserProfileExtensionTests {
                     when(mock.persist()).thenReturn(true);
                 })) {
             userProfileExtension.onRegistered();
-            userProfileExtension.handleProfileDeleteEvent(removeProfileEvent);
+            userProfileExtension.handleProfileResetEvent(removeProfileEvent);
             // verify loading the stored data from the shared preference.
             // 1. initialized a PersistentProfileData instance.
             assertEquals(1, profileDataMocks.constructed().size());
@@ -413,6 +609,125 @@ public class UserProfileExtensionTests {
             userProfileExtension.handleProfileDeleteEvent(removeProfileEvent);
             verifyNoInteractions(extensionApiMock);
             assertEquals(0, profileDataMocks.constructed().size());
+        }
+    }
+
+    @Test
+    public void test_handleRulesEvent_withoutConsequence() {
+        Event ruleConsequenceEvent = new Event.Builder(
+                "Consequence Rule",
+                "com.adobe.eventType.rulesEngine",
+                "com.adobe.eventSource.responseContent")
+                .setEventData(new HashMap<String, Object>() {
+                    {
+                        put("triggeredconsequence", new HashMap<String, Object>() {
+                            {
+                                put("type", "csp");
+                                put("id", "xxx");
+                                put("detail", new HashMap<String, Object>());
+                            }
+                        });
+                    }
+                }).build();
+        Map<String, Object> data = new HashMap<String, Object>() {
+            {
+                put("key", "value");
+            }
+        };
+
+        try (MockedConstruction<ProfileData> profileDataMocks = mockConstruction(ProfileData.class,
+                (mock, context) -> {
+                    when(mock.getMap()).thenReturn(data);
+                    when(mock.loadPersistenceData()).thenReturn(true);
+                    when(mock.persist()).thenReturn(true);
+                })) {
+            userProfileExtension.onRegistered();
+            userProfileExtension.handleRulesEvent(ruleConsequenceEvent);
+            reset(extensionApiMock);
+            verifyNoInteractions(extensionApiMock);
+        }
+    }
+
+    @Test
+    public void test_handleRulesEvent_withoutInvalidOperation() {
+        Event ruleConsequenceEvent = new Event.Builder(
+                "Consequence Rule",
+                "com.adobe.eventType.rulesEngine",
+                "com.adobe.eventSource.responseContent")
+                .setEventData(new HashMap<String, Object>() {
+                    {
+                        put("triggeredconsequence", new HashMap<String, Object>() {
+                            {
+                                put("type", "csp");
+                                put("id", "xxx");
+                                put("detail", new HashMap<String, Object>() {
+                                    {
+                                        put("operation", "x");
+                                        put("key", "key");
+                                        put("value", "value");
+                                    }
+                                });
+                            }
+                        });
+                    }
+                }).build();
+        Map<String, Object> data = new HashMap<String, Object>() {
+            {
+                put("key", "value");
+            }
+        };
+
+        try (MockedConstruction<ProfileData> profileDataMocks = mockConstruction(ProfileData.class,
+                (mock, context) -> {
+                    when(mock.getMap()).thenReturn(data);
+                    when(mock.loadPersistenceData()).thenReturn(true);
+                    when(mock.persist()).thenReturn(true);
+                })) {
+            userProfileExtension.onRegistered();
+            userProfileExtension.handleRulesEvent(ruleConsequenceEvent);
+            reset(extensionApiMock);
+            verifyNoInteractions(extensionApiMock);
+        }
+    }
+    @Test
+    public void test_handleRulesEvent_withoutInvalidConsequence() {
+        Event ruleConsequenceEvent = new Event.Builder(
+                "Consequence Rule",
+                "com.adobe.eventType.rulesEngine",
+                "com.adobe.eventSource.responseContent")
+                .setEventData(new HashMap<String, Object>() {
+                    {
+                        put("triggeredconsequence", new HashMap<String, Object>() {
+                            {
+                                put("type", "csp");
+                                put("id", "xxx");
+                                put("detail", new HashMap<String, Object>() {
+                                    {
+                                        put("operation", new HashMap<String, Object>());
+                                        put("key", "key");
+                                        put("value", "value");
+                                    }
+                                });
+                            }
+                        });
+                    }
+                }).build();
+        Map<String, Object> data = new HashMap<String, Object>() {
+            {
+                put("key", "value");
+            }
+        };
+
+        try (MockedConstruction<ProfileData> profileDataMocks = mockConstruction(ProfileData.class,
+                (mock, context) -> {
+                    when(mock.getMap()).thenReturn(data);
+                    when(mock.loadPersistenceData()).thenReturn(true);
+                    when(mock.persist()).thenReturn(true);
+                })) {
+            userProfileExtension.onRegistered();
+            userProfileExtension.handleRulesEvent(ruleConsequenceEvent);
+            reset(extensionApiMock);
+            verifyNoInteractions(extensionApiMock);
         }
     }
 
@@ -465,6 +780,48 @@ public class UserProfileExtensionTests {
             assertEquals(data, updateProfileMapCaptor.getValue());
             // 3. a shared state for UserProfile extension was created and an Event was dispatched with the loaded profile data.
             verifySharedSateAndDispatchedEvent(ruleConsequenceEvent, data);
+        }
+    }
+
+    @Test
+    public void test_handleRulesEvent_write_withoutKey() {
+        Event ruleConsequenceEvent = new Event.Builder(
+                "Consequence Rule",
+                "com.adobe.eventType.rulesEngine",
+                "com.adobe.eventSource.responseContent")
+                .setEventData(new HashMap<String, Object>() {
+                    {
+                        put("triggeredconsequence", new HashMap<String, Object>() {
+                            {
+                                put("type", "csp");
+                                put("id", "xxx");
+                                put("detail", new HashMap<String, Object>() {
+                                    {
+                                        put("operation", "write");
+                                        put("key", "");
+                                        put("value", "value");
+                                    }
+                                });
+                            }
+                        });
+                    }
+                }).build();
+        Map<String, Object> data = new HashMap<String, Object>() {
+            {
+                put("key", "value");
+            }
+        };
+
+        try (MockedConstruction<ProfileData> profileDataMocks = mockConstruction(ProfileData.class,
+                (mock, context) -> {
+                    when(mock.getMap()).thenReturn(data);
+                    when(mock.loadPersistenceData()).thenReturn(true);
+                    when(mock.persist()).thenReturn(true);
+                })) {
+            userProfileExtension.onRegistered();
+            userProfileExtension.handleRulesEvent(ruleConsequenceEvent);
+            reset(extensionApiMock);
+            verifyNoInteractions(extensionApiMock);
         }
     }
 
@@ -796,6 +1153,87 @@ public class UserProfileExtensionTests {
             verifySharedSateAndDispatchedEvent(ruleConsequenceEvent, data);
         }
     }
+
+    @Test
+    public void test_handleRulesEvent_delete_withEmptyKey() {
+        Event ruleConsequenceEvent = new Event.Builder(
+                "Consequence Rule",
+                "com.adobe.eventType.rulesEngine",
+                "com.adobe.eventSource.responseContent")
+                .setEventData(new HashMap<String, Object>() {
+                    {
+                        put("triggeredconsequence", new HashMap<String, Object>() {
+                            {
+                                put("type", "csp");
+                                put("id", "xxx");
+                                put("detail", new HashMap<String, Object>() {
+                                    {
+                                        put("operation", "delete");
+                                        put("key", "");
+                                    }
+                                });
+                            }
+                        });
+                    }
+                }).build();
+        Map<String, Object> data = new HashMap<String, Object>() {
+            {
+                put("key", "value");
+            }
+        };
+        try (MockedConstruction<ProfileData> profileDataMocks = mockConstruction(ProfileData.class,
+                (mock, context) -> {
+                    when(mock.getMap()).thenReturn(data);
+                    when(mock.loadPersistenceData()).thenReturn(true);
+                    when(mock.persist()).thenReturn(true);
+                })) {
+            userProfileExtension.onRegistered();
+            reset(extensionApiMock);
+            userProfileExtension.handleRulesEvent(ruleConsequenceEvent);
+            verifyNoInteractions(extensionApiMock);
+        }
+    }
+
+    @Test
+    public void test_handleRulesEvent_delete_withInvalidKey() {
+        Event ruleConsequenceEvent = new Event.Builder(
+                "Consequence Rule",
+                "com.adobe.eventType.rulesEngine",
+                "com.adobe.eventSource.responseContent")
+                .setEventData(new HashMap<String, Object>() {
+                    {
+                        put("triggeredconsequence", new HashMap<String, Object>() {
+                            {
+                                put("type", "csp");
+                                put("id", "xxx");
+                                put("detail", new HashMap<String, Object>() {
+                                    {
+                                        put("operation", "delete");
+                                        put("key", new HashMap<>());
+                                    }
+                                });
+                            }
+                        });
+                    }
+                }).build();
+        Map<String, Object> data = new HashMap<String, Object>() {
+            {
+                put("key", "value");
+            }
+        };
+        try (MockedConstruction<ProfileData> profileDataMocks = mockConstruction(ProfileData.class,
+                (mock, context) -> {
+                    when(mock.getMap()).thenReturn(data);
+                    when(mock.loadPersistenceData()).thenReturn(true);
+                    when(mock.persist()).thenReturn(true);
+                })) {
+            userProfileExtension.onRegistered();
+            reset(extensionApiMock);
+            userProfileExtension.handleRulesEvent(ruleConsequenceEvent);
+            verifyNoInteractions(extensionApiMock);
+        }
+    }
+
 
     @Test
     public void test_handleRulesEvent_otherConsequence() {
