@@ -11,6 +11,29 @@ orbs:
 
 jobs:
 
+  build-project:
+    
+    executor:
+      name: android/android-machine
+      resource-class: large
+      tag: 2021.10.1
+
+    steps:
+      # Checkout the code as the first step.
+      - checkout
+      - run:
+          name: build library
+          command: |
+            make assemble-phone
+      - run:
+          name: build test app
+          command: |
+            make assemble-app
+      - run:
+          name: build java doc
+          command: |
+            make javadoc
+
   unit-test:
     
     executor:
@@ -98,5 +121,6 @@ workflows:
   build-it: # This is the name of the workflow, feel free to change it to better match your workflow.
     # Inside the workflow, you define the jobs you want to run.
     jobs:
+      - build-project
       - unit-test
       - functional-test

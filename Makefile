@@ -11,8 +11,14 @@ functional-test:
 functional-test-coverage:
 		(./code/gradlew -p code/android-userprofile-library createPhoneDebugAndroidTestCoverageReport)
 
-code-coverage:
-		(./code/gradlew -p code/android-userprofile-library codeCoverageReport)
+javadoc:
+		(./code/gradlew -p code/android-userprofile-library javadocPublish)
 
-ci-publish:
-	(./code/gradlew -p code/android-userprofile-library  publishReleasePublicationToSonatypeRepository)
+publish:
+		(./code/gradlew -p code/android-userprofile-library  publishReleasePublicationToSonatypeRepository)
+
+assemble-phone:
+		(./code/gradlew -p code/android-userprofile-library  assemblePhone)
+
+assemble-app:
+		(./code/gradlew -p code/testapp  assemble)

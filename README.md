@@ -13,7 +13,7 @@ By using the Beta, you hereby acknowledge that the Beta is provided "as is" with
 
 The Adobe Experience Platform UserProfile Mobile Extension is an extension for the [Adobe Experience Platform SDK](https://github.com/Adobe-Marketing-Cloud/acp-sdks).
 
-To learn more about this extension, read [Adobe Experience Platform Profile Mobile Extension](https://aep-sdks.gitbook.io/docs/v/AEP-Edge-Docs/).
+To learn more about this extension, read [Adobe Experience Platform Profile Mobile Extension](https://aep-sdks.gitbook.io/docs/foundation-extensions/profile).
 
 ## Contributing
 
