@@ -13,3 +13,6 @@ functional-test-coverage:
 
 code-coverage:
 		(./code/gradlew -p code/android-userprofile-library codeCoverageReport)
+
+ci-publish:
+	(./code/gradlew -p code/android-userprofile-library  publishReleasePublicationToSonatypeRepository)
