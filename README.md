@@ -1,5 +1,8 @@
 # Adobe Experience Platform - UserProfile extension for Android
 
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/adobe/aepsdk-userprofile-android/tree/dev-v2%2E0%2E0.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/adobe/aepsdk-userprofile-android/tree/dev-v2%2E0%2E0)
+[![codecov](https://codecov.io/gh/adobe/aepsdk-userprofile-android/branch/main/graph/badge.svg?token=UgtU9vDA6j)](https://codecov.io/gh/adobe/aepsdk-userprofile-android)
+
 ## BETA ACKNOWLEDGEMENT
 
 AEPUserProfile is currently in Beta. Use of this code is by invitation only and not otherwise supported by Adobe. Please contact your Adobe Customer Success Manager to learn more.
