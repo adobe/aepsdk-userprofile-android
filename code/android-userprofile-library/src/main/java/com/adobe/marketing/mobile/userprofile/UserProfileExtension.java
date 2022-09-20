@@ -108,8 +108,8 @@ public class UserProfileExtension extends Extension {
         }
         Map<String, Object> eventData = event.getEventData();
 
-        if (eventData == null) {
-            Log.debug(UserProfileConstants.LOG_TAG, CLASS_NAME, "Unexpected Null Value (Event data). Ignoring event");
+        if (eventData == null || eventData.isEmpty()) {
+            Log.debug(UserProfileConstants.LOG_TAG, CLASS_NAME, "Unexpected Null/empty Value (Event data). Ignoring event");
             return;
         }
 
@@ -129,7 +129,7 @@ public class UserProfileExtension extends Extension {
         }
         Map<String, Object> eventData = event.getEventData();
 
-        if (eventData == null) {
+        if (eventData == null || eventData.isEmpty()) {
             Log.debug(UserProfileConstants.LOG_TAG, CLASS_NAME,
                     "Unexpected Null Value (event data), discarding the user profile request reset event.");
             return;
@@ -186,9 +186,6 @@ public class UserProfileExtension extends Extension {
             } else {
                 return;
             }
-        } catch (DataReaderException e) {
-            Log.error(UserProfileConstants.LOG_TAG, CLASS_NAME, "Could not extract the profile request data from the Event - (%s)", e);
-            return;
         } catch (Exception e) {
             Log.error(UserProfileConstants.LOG_TAG, CLASS_NAME, "Could not find specific data from persisted profile data - (%s)", e);
             return;

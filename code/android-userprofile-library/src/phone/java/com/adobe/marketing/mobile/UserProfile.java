@@ -69,6 +69,7 @@ public class UserProfile {
     public static void updateUserAttributes(@NotNull final Map<String, Object> attributeMap) {
         if (attributeMap == null || attributeMap.isEmpty()) {
             Log.debug(UserProfileConstants.LOG_TAG, CLASS_NAME, "updateUserAttributes - the given attribute map is null or empty, no event was dispatched");
+            return;
         }
         Map<String, Object> eventDataMap = new HashMap<>();
         eventDataMap.put(UserProfileConstants.EventDataKeys.UserProfile.UPDATE_DATA_KEY, attributeMap);
@@ -97,6 +98,7 @@ public class UserProfile {
     public static void updateUserAttribute(@NotNull final String attributeName, @Nullable final Object attributeValue) {
         if (attributeName == null || attributeName.isEmpty()) {
             Log.debug(UserProfileConstants.LOG_TAG, CLASS_NAME, "updateUserAttributes - attributeName is null or empty, no event was dispatched");
+            return;
         }
         Log.trace(UserProfileConstants.LOG_TAG, CLASS_NAME, "Updating user attribute with attribute name: %s", attributeName);
         Map<String, Object> attributeMap = new HashMap<>();
@@ -115,13 +117,9 @@ public class UserProfile {
     public static void removeUserAttribute(@NotNull final String attributeName) {
         if (attributeName == null || attributeName.isEmpty()) {
             Log.debug(UserProfileConstants.LOG_TAG, CLASS_NAME, "updateUserAttributes - attributeName is null or empty, no event was dispatched");
-        }
-        Log.trace(UserProfileConstants.LOG_TAG, CLASS_NAME, "Removing user attribute with key: %s", attributeName);
-
-        if (attributeName == null) {
-            Log.debug(CLASS_NAME, "%s (key), failed to remove user attribute", Log.UNEXPECTED_NULL_VALUE);
             return;
         }
+        Log.trace(UserProfileConstants.LOG_TAG, CLASS_NAME, "Removing user attribute with key: %s", attributeName);
 
         List<String> keys = new ArrayList<>(1);
         keys.add(attributeName);
@@ -139,6 +137,7 @@ public class UserProfile {
     public static void removeUserAttributes(@NotNull final List<String> attributeNames) {
         if (attributeNames == null || attributeNames.isEmpty()) {
             Log.debug(UserProfileConstants.LOG_TAG, CLASS_NAME, "removeUserAttributes - the given attribute map is null or empty, no event was dispatched");
+            return;
         }
         Log.trace(UserProfileConstants.LOG_TAG, CLASS_NAME, "Removing user attributes");
         Map<String, Object> eventDataMap = new HashMap<>();

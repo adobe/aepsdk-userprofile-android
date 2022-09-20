@@ -45,10 +45,15 @@ public class PublicAPITests {
     public void setup() {
     }
 
+    @Test
+    public void test_extensionVersion() {
+        assertEquals("2.0.0", UserProfile.extensionVersion());
+    }
+
 
     @SuppressWarnings("rawtypes")
     @Test
-    public void test_registerExtension() throws Exception {
+    public void test_registerExtension() {
         try (MockedStatic<MobileCore> mobileCoreMockedStatic = Mockito.mockStatic(MobileCore.class)) {
             // mock MobileCore.registerExtension()
             ArgumentCaptor<Class> extensionClassCaptor = ArgumentCaptor.forClass(Class.class);
@@ -63,8 +68,30 @@ public class PublicAPITests {
             // verify: happy
             assertNotNull(callbackCaptor.getValue());
             assertEquals(UserProfileExtension.class, extensionClassCaptor.getValue());
-            // verify: error callback was called
+            // verify: not exception when error callback was called
             callbackCaptor.getValue().error(ExtensionError.UNEXPECTED_ERROR);
+        }
+    }
+
+    @SuppressWarnings("rawtypes")
+    @Test
+    public void test_registerExtension_withoutError() {
+        try (MockedStatic<MobileCore> mobileCoreMockedStatic = Mockito.mockStatic(MobileCore.class)) {
+            // mock MobileCore.registerExtension()
+            ArgumentCaptor<Class> extensionClassCaptor = ArgumentCaptor.forClass(Class.class);
+            ArgumentCaptor<ExtensionErrorCallback> callbackCaptor = ArgumentCaptor.forClass(
+                    ExtensionErrorCallback.class
+            );
+            mobileCoreMockedStatic
+                    .when(() -> MobileCore.registerExtension(extensionClassCaptor.capture(), callbackCaptor.capture()))
+                    .thenReturn(true);
+            // call registerExtension() API
+            UserProfile.registerExtension();
+            // verify: happy
+            assertNotNull(callbackCaptor.getValue());
+            assertEquals(UserProfileExtension.class, extensionClassCaptor.getValue());
+            // verify: not exception when error callback was called
+            callbackCaptor.getValue().error(null);
         }
     }
 
@@ -92,6 +119,15 @@ public class PublicAPITests {
         }
     }
 
+    @Test
+    public void test_updateUserAttributes_withNullMap() {
+        try (MockedStatic<MobileCore> mobileCoreMockedStatic = Mockito.mockStatic(MobileCore.class)) {
+            mobileCoreMockedStatic.reset();
+            UserProfile.updateUserAttributes(null);
+            mobileCoreMockedStatic.verifyNoInteractions();
+        }
+    }
+
 
     @Test
     public void test_updateUserAttribute() {
@@ -115,6 +151,15 @@ public class PublicAPITests {
         }
     }
 
+    @Test
+    public void test_updateUserAttribute_withNullKey() {
+        try (MockedStatic<MobileCore> mobileCoreMockedStatic = Mockito.mockStatic(MobileCore.class)) {
+            mobileCoreMockedStatic.reset();
+            UserProfile.updateUserAttribute(null, null);
+            mobileCoreMockedStatic.verifyNoInteractions();
+        }
+    }
+
 
     @Test
     public void test_removeUserAttribute() {
@@ -135,6 +180,15 @@ public class PublicAPITests {
     }
 
     @Test
+    public void test_removeUserAttribute_withNullKey() {
+        try (MockedStatic<MobileCore> mobileCoreMockedStatic = Mockito.mockStatic(MobileCore.class)) {
+            mobileCoreMockedStatic.reset();
+            UserProfile.removeUserAttribute(null);
+            mobileCoreMockedStatic.verifyNoInteractions();
+        }
+    }
+
+    @Test
     public void test_removeUserAttributes() {
         try (MockedStatic<MobileCore> mobileCoreMockedStatic = Mockito.mockStatic(MobileCore.class)) {
             mobileCoreMockedStatic.reset();
@@ -150,6 +204,15 @@ public class PublicAPITests {
             Map<String, Object> eventData = dispatchedEvent.getEventData();
             assertTrue(eventData.containsKey("userprofileremovekeys"));
             assertEquals(keys, eventData.get("userprofileremovekeys"));
+        }
+    }
+
+    @Test
+    public void test_removeUserAttributes_withNullKey() {
+        try (MockedStatic<MobileCore> mobileCoreMockedStatic = Mockito.mockStatic(MobileCore.class)) {
+            mobileCoreMockedStatic.reset();
+            UserProfile.removeUserAttributes(null);
+            mobileCoreMockedStatic.verifyNoInteractions();
         }
     }
 
@@ -177,6 +240,36 @@ public class PublicAPITests {
             Map<String, Object> eventData = dispatchedEvent.getEventData();
             assertTrue(eventData.containsKey("userprofilegetattributes"));
             assertEquals(keys, eventData.get("userprofilegetattributes"));
+        }
+    }
+
+    @Test
+    public void test_getUserAttributes_withoutCallback() {
+        try (MockedStatic<MobileCore> mobileCoreMockedStatic = Mockito.mockStatic(MobileCore.class)) {
+            mobileCoreMockedStatic.reset();
+            List<String> keys = Arrays.asList("key1", "key2");
+            UserProfile.getUserAttributes(keys, null);
+            mobileCoreMockedStatic.verifyNoInteractions();
+        }
+    }
+
+    @Test
+    public void test_getUserAttributes_withNullKey() {
+        try (MockedStatic<MobileCore> mobileCoreMockedStatic = Mockito.mockStatic(MobileCore.class)) {
+            mobileCoreMockedStatic.reset();
+            UserProfile.getUserAttributes(null, new AdobeCallbackWithError<Map<String, Object>>() {
+                @Override
+                public void fail(AdobeError adobeError) {
+                }
+
+                @Override
+                public void call(Map<String, Object> stringObjectMap) {
+                    assertNotNull(stringObjectMap);
+                    assertTrue(stringObjectMap.isEmpty());
+                }
+            });
+            mobileCoreMockedStatic.verifyNoInteractions();
+
         }
     }
 
