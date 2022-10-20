@@ -11,6 +11,10 @@
 package com.adobe.marketing.mobile.userprofile;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -18,55 +22,61 @@ import android.content.SharedPreferences;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import com.adobe.marketing.mobile.AdobeCallbackWithError;
+import com.adobe.marketing.mobile.AdobeError;
 import com.adobe.marketing.mobile.Event;
+import com.adobe.marketing.mobile.Extension;
 import com.adobe.marketing.mobile.LoggingMode;
 import com.adobe.marketing.mobile.MobileCore;
+import com.adobe.marketing.mobile.SDKHelper;
+import com.adobe.marketing.mobile.SharedStateResolution;
+import com.adobe.marketing.mobile.SharedStateResult;
 import com.adobe.marketing.mobile.UserProfile;
-import com.adobe.marketing.mobile.internal.eventhub.EventHub;
+import com.adobe.marketing.mobile.services.Log;
+import com.adobe.marketing.mobile.util.DataReader;
+import com.adobe.marketing.mobile.util.DataReaderException;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 @RunWith(AndroidJUnit4.class)
 public class UserProfileIntegrationTests {
 
     @Before
     public void setup() throws InterruptedException {
+        SDKHelper.resetSDK();
         MobileCore.setApplication(ApplicationProvider.getApplicationContext());
         Context context = ApplicationProvider.getApplicationContext();
         SharedPreferences sharedPreference = context.getSharedPreferences("ADBUserProfile", 0);
         SharedPreferences.Editor editor = sharedPreference.edit();
         editor.clear();
         editor.commit();
-        EventHub.Companion.setShared(new EventHub());
+
         final CountDownLatch latch = new CountDownLatch(1);
         MobileCore.setLogLevel(LoggingMode.VERBOSE);
-        UserProfile.registerExtension();
-        MobileCore.registerExtension(MonitorExtension.class, null);
-        MobileCore.start(o -> latch.countDown());
-        latch.await();
+        List<Class<? extends Extension>> extensions = new ArrayList<>();
+        extensions.add(UserProfile.EXTENSION);
+        extensions.add(MonitorExtension.class);
+        MobileCore.registerExtensions(extensions, o -> latch.countDown());
+        assertTrue(latch.await(1000, TimeUnit.MILLISECONDS));
     }
 
-
-    @Test
-    public void testExtensionRegistrationWillCreateSharedState() throws InterruptedException {
-        EventHub.Companion.setShared(new EventHub());
-        final CountDownLatch latch = new CountDownLatch(1);
-        UserProfile.registerExtension();
-        MobileCore.registerExtension(MonitorExtension.class, null);
-        MobileCore.start(o -> latch.countDown());
-        latch.await();
-        //TODO: boot event is not dispatched???
-    }
-
-    @Test(timeout = 1000)
+    @Test(timeout = 10000)
     public void testUpdateUserAttributesWithAllSupportedTypes() throws InterruptedException {
+        updateUserAttributesWithAllSupportedTypes();
+    }
+
+    private void updateUserAttributesWithAllSupportedTypes() throws InterruptedException {
         UserProfile.updateUserAttributes(
                 new HashMap<String, Object>() {
                     {
@@ -94,6 +104,48 @@ public class UserProfileIntegrationTests {
             getDataLatch.countDown();
         });
         getDataLatch.await();
+    }
+
+    private void sleep(int milliSeconds) {
+        try {
+            Thread.sleep(milliSeconds);
+        } catch (InterruptedException e) {
+        }
+    }
+
+
+    @Test(timeout = 10000)
+    public void testExtensionRegistrationLoadLocalDataAndCreateSharedState() throws InterruptedException {
+        updateUserAttributesWithAllSupportedTypes();
+
+        SDKHelper.resetSDK();
+        MobileCore.setApplication(ApplicationProvider.getApplicationContext());
+        final CountDownLatch latch = new CountDownLatch(1);
+        MobileCore.setLogLevel(LoggingMode.VERBOSE);
+        List<Class<? extends Extension>> extensions = new ArrayList<>();
+        extensions.add(UserProfile.EXTENSION);
+        extensions.add(MonitorExtension.class);
+        MobileCore.registerExtensions(extensions, o -> {
+            sleep(100);
+            assertNotNull(MonitorExtension.MONITOR_EXTENSION_INSTANCE.get());
+            SharedStateResult result = MonitorExtension.MONITOR_EXTENSION_INSTANCE.get().getApi().getSharedState(
+                    "com.adobe.module.userProfile",
+                    null,
+                    false,
+                    SharedStateResolution.LAST_SET
+            );
+            Map<String, Object> data = result == null ? null : result.getValue();
+            assertNotNull(data);
+            assertFalse(data.isEmpty());
+            try {
+                Map<String, Object> map = DataReader.getTypedMap(Object.class, data, "userprofiledata");
+                assertEquals(4, map.keySet().size());
+            } catch (DataReaderException e) {
+                fail();
+            }
+            latch.countDown();
+        });
+        latch.await();
     }
 
     @Test(timeout = 1000)

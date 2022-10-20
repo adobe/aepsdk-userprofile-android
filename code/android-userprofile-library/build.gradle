@@ -50,8 +50,7 @@ dependencies {
     //noinspection GradleDependency
     implementation 'androidx.appcompat:appcompat:1.4.2'
 //    implementation 'com.adobe.marketing.mobile:core:2.0.0'
-    implementation 'com.github.adobe.aepsdk-core-android:core:v2.0.0-alpha.1'
-
+    implementation 'com.github.adobe.aepsdk-core-android:core:v2.0.0-alpha.3'
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation "org.mockito:mockito-core:4.5.1"
@@ -61,7 +60,6 @@ dependencies {
     testImplementation fileTree(include: ['*.aar'], dir: 'libs')
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
-
 }
 
 tasks.withType(Test) {

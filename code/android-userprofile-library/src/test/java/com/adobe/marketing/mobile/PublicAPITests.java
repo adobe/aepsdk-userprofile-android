@@ -11,7 +11,6 @@
 package com.adobe.marketing.mobile;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -19,7 +18,6 @@ import static org.mockito.ArgumentMatchers.anyLong;
 
 import com.adobe.marketing.mobile.userprofile.UserProfileExtension;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,14 +26,12 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class PublicAPITests {
@@ -71,6 +67,15 @@ public class PublicAPITests {
             // verify: not exception when error callback was called
             callbackCaptor.getValue().error(ExtensionError.UNEXPECTED_ERROR);
         }
+    }
+
+    @Test
+    public void test_publicExtensionConstants() {
+        assertEquals(UserProfileExtension.class, UserProfile.EXTENSION);
+        List<Class<? extends Extension>> extensions = new ArrayList<>();
+        extensions.add(UserProfile.EXTENSION);
+        // should not throw exceptions
+        MobileCore.registerExtensions(extensions, null);
     }
 
     @SuppressWarnings("rawtypes")

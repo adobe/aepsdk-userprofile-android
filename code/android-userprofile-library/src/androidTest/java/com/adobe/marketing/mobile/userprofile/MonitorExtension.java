@@ -10,12 +10,16 @@
  */
 package com.adobe.marketing.mobile.userprofile;
 
-import com.adobe.marketing.mobile.Event;
 import com.adobe.marketing.mobile.Extension;
 import com.adobe.marketing.mobile.ExtensionApi;
-import com.adobe.marketing.mobile.services.Log;
+import com.adobe.marketing.mobile.SharedStateResolution;
+import com.adobe.marketing.mobile.SharedStateResult;
+
+import java.util.concurrent.atomic.AtomicReference;
 
 public class MonitorExtension extends Extension {
+    static AtomicReference<MonitorExtension> MONITOR_EXTENSION_INSTANCE = new AtomicReference<>(null);
+
     /**
      * Construct the extension and initialize with the {@code ExtensionApi}.
      *
@@ -32,14 +36,7 @@ public class MonitorExtension extends Extension {
 
     @Override
     protected void onRegistered() {
-        getApi().registerEventListener(
-                "com.adobe.eventType.hub",
-                "com.adobe.eventSource.sharedState",
-                this::monitorProfileSharedState);
-    }
-
-    private void monitorProfileSharedState(Event event) {
-        Log.warning("MonitorExtension", "", "event: %s", event.toString());
+        MONITOR_EXTENSION_INSTANCE.set(this);
     }
 
 }

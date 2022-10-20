@@ -28,6 +28,7 @@ import java.util.Map;
 public class UserProfile {
     private final static String EXTENSION_VERSION = "2.0.0";
     private static final String CLASS_NAME = "UserProfile";
+    public static final Class<? extends Extension> EXTENSION = UserProfileExtension.class;
 
     private UserProfile() {
     }
