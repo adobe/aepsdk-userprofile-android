@@ -96,6 +96,7 @@ public class UserProfile {
      * @param attributeValue Attribute value corresponding to the key. Java
      *                       primitive types, Maps and Lists are supported.
      */
+    @Deprecated
     public static void updateUserAttribute(@NotNull final String attributeName, @Nullable final Object attributeValue) {
         if (attributeName == null || attributeName.isEmpty()) {
             Log.debug(UserProfileConstants.LOG_TAG, CLASS_NAME, "updateUserAttributes - attributeName is null or empty, no event was dispatched");
@@ -115,6 +116,7 @@ public class UserProfile {
      *
      * @param attributeName A {@link String} attribute key which has to be removed.
      */
+    @Deprecated
     public static void removeUserAttribute(@NotNull final String attributeName) {
         if (attributeName == null || attributeName.isEmpty()) {
             Log.debug(UserProfileConstants.LOG_TAG, CLASS_NAME, "updateUserAttributes - attributeName is null or empty, no event was dispatched");
