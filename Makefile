@@ -22,3 +22,7 @@ assemble-phone:
 
 assemble-app:
 		(./code/gradlew -p code/testapp  assemble)
+
+identity-publish-maven-local-jitpack:
+		(./code/gradlew -p code/android-userprofile-library assemblePhone)
+		(./code/gradlew -p code/android-userprofile-library publishReleasePublicationToMavenLocal -Pjitpack  -x signReleasePublication)

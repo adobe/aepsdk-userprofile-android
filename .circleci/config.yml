@@ -10,9 +10,7 @@ orbs:
   android: circleci/android@2.1.2
 
 jobs:
-
   build-project:
-    
     executor:
       name: android/android-machine
       resource-class: large
@@ -25,6 +23,12 @@ jobs:
           name: build library
           command: |
             make assemble-phone
+
+      - run:
+          name: publish jitpack build to local repository
+          command: |
+            make identity-publish-maven-local-jitpack
+
       - run:
           name: build test app
           command: |
@@ -35,7 +39,6 @@ jobs:
             make javadoc
 
   unit-test:
-    
     executor:
       name: android/android-machine
       resource-class: large
@@ -72,7 +75,6 @@ jobs:
             bash ./codecov -v -X s3 -c -D "./code/android-userprofile-library/build/reports/coverage/test/phone/debug" -F unit-tests
 
   functional-test:
-    
     executor:
       name: android/android-machine
       resource-class: large

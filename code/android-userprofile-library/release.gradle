@@ -28,10 +28,16 @@ task javadocPublish(type: Jar) {
 
 publish.dependsOn('assemblePhone')
 
+def isJitPackBuild() {
+    return hasProperty('jitpack')
+}
+
+def groupIdForPublish = isJitPackBuild()? 'com.github.adobe.aepsdk-userprofile-android': 'com.adobe.marketing.mobile'
+
 publishing {
     publications {
         release(MavenPublication) {
-            groupId = 'com.adobe.marketing.mobile'
+            groupId = groupIdForPublish
             artifactId = rootProject.moduleName
             version = version
             artifact("$buildDir/outputs/aar/${rootProject.moduleAARName}")
