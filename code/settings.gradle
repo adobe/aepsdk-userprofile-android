@@ -1,0 +1,3 @@
+include ':android-userprofile-library'
+rootProject.name = "aepsdk-userprofile-android"
+include ':testapp'
