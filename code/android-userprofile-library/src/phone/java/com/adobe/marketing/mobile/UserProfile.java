@@ -11,7 +11,6 @@
 
 package com.adobe.marketing.mobile;
 
-import com.adobe.marketing.mobile.userprofile.UserProfileConstants;
 import com.adobe.marketing.mobile.userprofile.UserProfileExtension;
 import com.adobe.marketing.mobile.util.DataReader;
 import com.adobe.marketing.mobile.util.DataReaderException;
@@ -26,9 +25,14 @@ import java.util.List;
 import java.util.Map;
 
 public class UserProfile {
-    private final static String EXTENSION_VERSION = "2.0.0";
+    private static final String LOG_TAG = "UserProfile";
+    private static final String EXTENSION_VERSION = "2.0.0";
     private static final String CLASS_NAME = "UserProfile";
     public static final Class<? extends Extension> EXTENSION = UserProfileExtension.class;
+
+    private static final String UPDATE_DATA_KEY = "userprofileupdatekey";
+    private static final String GET_DATA_ATTRIBUTES = "userprofilegetattributes";
+    private static final String REMOVE_DATA_KEYS = "userprofileremovekeys";
 
     private UserProfile() {
     }
@@ -51,7 +55,7 @@ public class UserProfile {
             if (extensionError == null) {
                 return;
             }
-            Log.error(UserProfileConstants.LOG_TAG, CLASS_NAME, "There was an error when registering the UserProfile extension: %s",
+            Log.error(LOG_TAG, CLASS_NAME, "There was an error when registering the UserProfile extension: %s",
                     extensionError.getErrorName());
         });
     }
@@ -69,11 +73,11 @@ public class UserProfile {
      */
     public static void updateUserAttributes(@NotNull final Map<String, Object> attributeMap) {
         if (attributeMap == null || attributeMap.isEmpty()) {
-            Log.debug(UserProfileConstants.LOG_TAG, CLASS_NAME, "updateUserAttributes - the given attribute map is null or empty, no event was dispatched");
+            Log.debug(LOG_TAG, CLASS_NAME, "updateUserAttributes - the given attribute map is null or empty, no event was dispatched");
             return;
         }
         Map<String, Object> eventDataMap = new HashMap<>();
-        eventDataMap.put(UserProfileConstants.EventDataKeys.UserProfile.UPDATE_DATA_KEY, attributeMap);
+        eventDataMap.put(UPDATE_DATA_KEY, attributeMap);
         Event event = new Event.Builder(
                 "UserProfileUpdate",
                 EventType.USERPROFILE,
@@ -99,10 +103,10 @@ public class UserProfile {
     @Deprecated
     public static void updateUserAttribute(@NotNull final String attributeName, @Nullable final Object attributeValue) {
         if (attributeName == null || attributeName.isEmpty()) {
-            Log.debug(UserProfileConstants.LOG_TAG, CLASS_NAME, "updateUserAttributes - attributeName is null or empty, no event was dispatched");
+            Log.debug(LOG_TAG, CLASS_NAME, "updateUserAttributes - attributeName is null or empty, no event was dispatched");
             return;
         }
-        Log.trace(UserProfileConstants.LOG_TAG, CLASS_NAME, "Updating user attribute with attribute name: %s", attributeName);
+        Log.trace(LOG_TAG, CLASS_NAME, "Updating user attribute with attribute name: %s", attributeName);
         Map<String, Object> attributeMap = new HashMap<>();
         attributeMap.put(attributeName, attributeValue);
         updateUserAttributes(attributeMap);
@@ -119,10 +123,10 @@ public class UserProfile {
     @Deprecated
     public static void removeUserAttribute(@NotNull final String attributeName) {
         if (attributeName == null || attributeName.isEmpty()) {
-            Log.debug(UserProfileConstants.LOG_TAG, CLASS_NAME, "updateUserAttributes - attributeName is null or empty, no event was dispatched");
+            Log.debug(LOG_TAG, CLASS_NAME, "updateUserAttributes - attributeName is null or empty, no event was dispatched");
             return;
         }
-        Log.trace(UserProfileConstants.LOG_TAG, CLASS_NAME, "Removing user attribute with key: %s", attributeName);
+        Log.trace(LOG_TAG, CLASS_NAME, "Removing user attribute with key: %s", attributeName);
 
         List<String> keys = new ArrayList<>(1);
         keys.add(attributeName);
@@ -139,12 +143,12 @@ public class UserProfile {
      */
     public static void removeUserAttributes(@NotNull final List<String> attributeNames) {
         if (attributeNames == null || attributeNames.isEmpty()) {
-            Log.debug(UserProfileConstants.LOG_TAG, CLASS_NAME, "removeUserAttributes - the given attribute map is null or empty, no event was dispatched");
+            Log.debug(LOG_TAG, CLASS_NAME, "removeUserAttributes - the given attribute map is null or empty, no event was dispatched");
             return;
         }
-        Log.trace(UserProfileConstants.LOG_TAG, CLASS_NAME, "Removing user attributes");
+        Log.trace(LOG_TAG, CLASS_NAME, "Removing user attributes");
         Map<String, Object> eventDataMap = new HashMap<>();
-        eventDataMap.put(UserProfileConstants.EventDataKeys.UserProfile.REMOVE_DATA_KEYS, attributeNames);
+        eventDataMap.put(REMOVE_DATA_KEYS, attributeNames);
         Event event = new Event.Builder(
                 "RemoveUserProfile",
                 EventType.USERPROFILE,
@@ -165,19 +169,19 @@ public class UserProfile {
     public static void getUserAttributes(@NotNull final List<String> keys, @NotNull final AdobeCallback<Map<String, Object>> callback) {
 
         if (callback == null) {
-            Log.debug(UserProfileConstants.LOG_TAG, CLASS_NAME, "getUserAttributes - the given AdobeCallback is null, no event was dispatched");
+            Log.debug(LOG_TAG, CLASS_NAME, "getUserAttributes - the given AdobeCallback is null, no event was dispatched");
             return;
         }
 
         if (keys == null || keys.size() == 0) {
-            Log.debug(UserProfileConstants.LOG_TAG, CLASS_NAME, "getUserAttributes - the given key map is null or empty, no event was dispatched");
+            Log.debug(LOG_TAG, CLASS_NAME, "getUserAttributes - the given key map is null or empty, no event was dispatched");
             callback.call(new HashMap<>());
             return;
         }
-        Log.trace(UserProfileConstants.LOG_TAG, CLASS_NAME, "Getting user attributes");
+        Log.trace(LOG_TAG, CLASS_NAME, "Getting user attributes");
 
         Map<String, Object> eventDataMap = new HashMap<>();
-        eventDataMap.put(UserProfileConstants.EventDataKeys.UserProfile.GET_DATA_ATTRIBUTES, keys);
+        eventDataMap.put(GET_DATA_ATTRIBUTES, keys);
         Event event = new Event.Builder(
                 "getUserAttributes",
                 EventType.USERPROFILE,
@@ -211,10 +215,10 @@ public class UserProfile {
             public void call(Event event) {
                 try {
                     Map<String, Object> profileMap = DataReader.getTypedMap(Object.class, event.getEventData(),
-                            UserProfileConstants.EventDataKeys.UserProfile.GET_DATA_ATTRIBUTES);
+                            GET_DATA_ATTRIBUTES);
                     callback.call(profileMap);
                 } catch (DataReaderException e) {
-                    Log.error(UserProfileConstants.LOG_TAG, CLASS_NAME, "Failed to retrieve user attributes from given user profile event.");
+                    Log.error(LOG_TAG, CLASS_NAME, "Failed to retrieve user attributes from given user profile event.");
                     adobeCallbackWithError.fail(AdobeError.UNEXPECTED_ERROR);
                 }
             }
