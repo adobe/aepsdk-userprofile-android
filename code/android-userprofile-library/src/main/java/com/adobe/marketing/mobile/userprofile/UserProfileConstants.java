@@ -10,15 +10,15 @@
  */
 package com.adobe.marketing.mobile.userprofile;
 
-public final class UserProfileConstants {
-    public static final String LOG_TAG = "UserProfile";
+final class UserProfileConstants {
+    static final String LOG_TAG = "UserProfile";
     static final String FRIENDLY_NAME = "UserProfile";
     static final String MODULE_NAME = "com.adobe.module.userProfile";
 
     private UserProfileConstants() {
     }
 
-    public static final class EventDataKeys {
+    static final class EventDataKeys {
 
         private EventDataKeys() {
         }
@@ -36,27 +36,27 @@ public final class UserProfileConstants {
             }
         }
 
-        public static final class UserProfile {
+        static final class UserProfile {
 
             /**
              * This is the EventData key for the UserProfile Response event. The value for the key
              * will be a {@link java.util.Map}. Use {@code EventData.getObject(String)} to read the value.
              */
-            public static final String USER_PROFILE_DATA_KEY = "userprofiledata";
+            static final String USER_PROFILE_DATA_KEY = "userprofiledata";
 
             /**
              * This is the EventData key for the UserProfile Request Profile event. The value expected by the
              * UserProfileExtension for this key is a {@link java.util.Map}.
              */
-            public static final String UPDATE_DATA_KEY = "userprofileupdatekey";
+            static final String UPDATE_DATA_KEY = "userprofileupdatekey";
 
 
-            public static final String GET_DATA_ATTRIBUTES = "userprofilegetattributes";
+             static final String GET_DATA_ATTRIBUTES = "userprofilegetattributes";
 
             /**
              * This is the EventData key for the UserProfile Request Reset event.
              */
-            public static final String REMOVE_DATA_KEYS = "userprofileremovekeys";
+            static final String REMOVE_DATA_KEYS = "userprofileremovekeys";
 
 
             /**
