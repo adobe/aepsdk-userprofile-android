@@ -49,8 +49,8 @@ android {
 dependencies {
     //noinspection GradleDependency
     implementation 'androidx.appcompat:appcompat:1.4.2'
-//    implementation 'com.adobe.marketing.mobile:core:2.0.0'
-    implementation 'com.github.adobe.aepsdk-core-android:core:v2.0.0-alpha.3'
+    implementation 'com.adobe.marketing.mobile:core:2.0.0-SNAPSHOT'
+//    implementation 'com.github.adobe.aepsdk-core-android:core:v2.0.0-alpha.3'
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation "org.mockito:mockito-core:4.5.1"
