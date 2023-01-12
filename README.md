@@ -23,8 +23,8 @@ implementation 'com.adobe.marketing.mobile:userprofile:2.x.x'
 
 To open and run the project, open the `code/build.gradle` file in Android Studio
 
-**Run demo application**
-Once you open the project in Android Studio (see above), select the `app` runnable and your favorite emulator and run the program.
+**Run test application**
+Once you open the project in Android Studio (see above), select the `testapp` runnable and your favorite emulator and run the program.
 
 
 ## Documentation
