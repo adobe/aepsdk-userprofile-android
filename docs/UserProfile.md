@@ -14,9 +14,48 @@ public static String extensionVersion()
 
 ### Example
 
+#### Java
+
 ```Java
 String extensionVersion = UserProfile.extensionVersion();
 ```
+
+#### Kotlin
+
+```Java
+val extensionVersion = UserProfile.extensionVersion();
+```
+
+---
+
+## EXTENSION
+
+Represents a reference to `UserProfileExtension.class` that can be used to register with `MobileCore` via its `registerExtensions` api.
+
+### Syntax
+
+```java
+public static final Class<? extends Extension> EXTENSION = UserProfileExtension.class;
+```
+
+### Usage
+
+#### Java
+
+```java
+MobileCore.registerExtensions(Arrays.asList(UserProfile.EXTENSION, ...), new AdobeCallback<Object>() {
+    // implement completion callback
+});
+```
+
+#### Kotlin
+```kotlin
+MobileCore.registerExtensions(listOf(UserProfile.EXTENSION, ...)){
+    // implement completion callback
+}
+```
+
+--- 
 
 ## getUserAttributes:
 
@@ -35,6 +74,8 @@ public static void getUserAttributes(List<String> keys, AdobeCallback<Map<String
 A retail application wants to get the `itemsAddedToCart` user data when processing checkout.
 When `AdobeCallbackWithError` is provided, if the operation times out (5s) or an unexpected error occurs, the fail method is called with the appropriate `AdobeError`.
 
+#### Java
+
 ```Java
 UserProfile.getUserAttributes(Arrays.asList("itemsAddedToCart"), new AdobeCallbackWithError<Map<String, Object>>() {
     @Override
@@ -47,6 +88,24 @@ UserProfile.getUserAttributes(Arrays.asList("itemsAddedToCart"), new AdobeCallba
     }
 });
 ```
+
+#### Kotlin 
+
+```Kotlin
+UserProfile.getUserAttributes(listOf("itemsAddedToCart")) {
+    object : AdobeCallbackWithError<Map<String, Any?>> {
+        override fun fail(adobeError: AdobeError) {
+            // your customized code
+        }
+
+        override fun call(value: Map<String, Any?>) {
+            // your customized code
+        }
+    }
+}
+```
+
+--- 
 
 ## removeUserAttributes
 
@@ -63,9 +122,19 @@ public static void removeUserAttributes(List<String> attributeNames);
 
 You want to remove `username`, `usertype` user data when session timeout occurs.
 
+#### Java
+
 ```Java
 UserProfile.removeUserAttributes(Arrays.asList("username", "usertype"));
 ```
+
+#### Kotlin 
+
+```Kotlin
+UserProfile.removeUserAttributes(listOf("username", "usertype"))
+```
+
+---
 
 ## updateUserAttributes
 
@@ -88,10 +157,21 @@ public static void updateUserAttributes(Map<String, Object> attributeMap)
 
 You want to update `username`, `usertype` of a user obtained in the log in page :
 
+#### Java
+
 ```Java
 HashMap<String, Object> profileMap = new HashMap<>();
 profileMap.put("username","Will Smith");
 profileMap.put("usertype","Actor");
 UserProfile.updateUserAttributes(profileMap);
+```
 
+#### Kotlin
+
+```Kotlin
+val profileMap = mapOf(
+        "username" to "Will Smith",
+        "usertype" to "Actor"
+    )
+UserProfile.updateUserAttributes(profileMap)
 ```
