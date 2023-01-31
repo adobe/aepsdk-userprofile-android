@@ -19,14 +19,14 @@ UserProfile extension has a dependency on [AEP Core SDK](https://github.com/adob
 
    ```java
    import com.adobe.marketing.mobile.MobileCore;
-   import com.adobe.marketing.mobile.userprofile;
+   import com.adobe.marketing.mobile.UserProfile;
    ```
 
    ### Kotlin
 
    ```kotlin
    import com.adobe.marketing.mobile.MobileCore
-   import com.adobe.marketing.mobile.userprofile
+   import com.adobe.marketing.mobile.UserProfile
    ```
 
 3. Import the UserProfile library into your project and register it with `MobileCore`
