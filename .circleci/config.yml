@@ -27,7 +27,10 @@ jobs:
       - run:
           name: publish jitpack build to local repository
           command: |
-            make identity-publish-maven-local-jitpack
+            make userprofile-publish-maven-local-jitpack
+
+      - store_artifacts:
+          path: code/userprofile/build/libs
 
       - run:
           name: build test app
