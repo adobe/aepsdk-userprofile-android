@@ -13,9 +13,8 @@ package com.adobe.mobile.marketing.aep.testapp
 import android.app.Application
 import com.adobe.marketing.mobile.LoggingMode
 import com.adobe.marketing.mobile.MobileCore
+import com.adobe.marketing.mobile.Signal
 import com.adobe.marketing.mobile.UserProfile
-import com.adobe.marketing.mobile.signal.SignalExtension
-import com.adobe.marketing.mobile.userprofile.UserProfileExtension
 
 class MyApp : Application() {
 
@@ -25,8 +24,8 @@ class MyApp : Application() {
         MobileCore.setLogLevel(LoggingMode.VERBOSE)
         MobileCore.registerExtensions(
             listOf(
-                UserProfileExtension::class.java,
-                SignalExtension::class.java
+                UserProfile.EXTENSION,
+                Signal.EXTENSION
             )
         ) {
 
