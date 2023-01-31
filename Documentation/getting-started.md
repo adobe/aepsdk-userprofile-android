@@ -17,14 +17,14 @@ UserProfile extension has a dependency on [AEP Core SDK](https://github.com/adob
 
    ### Java
 
-   ```
+   ```java
    import com.adobe.marketing.mobile.MobileCore;
    import com.adobe.marketing.mobile.userprofile;
    ```
 
    ### Kotlin
 
-   ```
+   ```kotlin
    import com.adobe.marketing.mobile.MobileCore
    import com.adobe.marketing.mobile.userprofile
    ```
@@ -33,7 +33,7 @@ UserProfile extension has a dependency on [AEP Core SDK](https://github.com/adob
 
    ### Java
 
-   ```
+   ```java
    public class MainApp extends Application {
         private static final String APP_ID = "YOUR_APP_ID";
 
@@ -56,7 +56,7 @@ UserProfile extension has a dependency on [AEP Core SDK](https://github.com/adob
 
    ### Kotlin
 
-   ```
+   ```kotlin
    class MyApp : Application() {
 
        override fun onCreate() {
