@@ -11,13 +11,13 @@
 
 package com.adobe.marketing.mobile;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.adobe.marketing.mobile.userprofile.UserProfileExtension;
 import com.adobe.marketing.mobile.util.DataReader;
 import com.adobe.marketing.mobile.util.DataReaderException;
 import com.adobe.marketing.mobile.services.Log;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,6 +42,7 @@ public class UserProfile {
      *
      * @return The version as {@code String}
      */
+    @NonNull
     public static String extensionVersion() {
         return EXTENSION_VERSION;
     }
@@ -74,7 +75,7 @@ public class UserProfile {
      *
      * @param attributeMap HashMap of profile attributes key-value pairs to be set.
      */
-    public static void updateUserAttributes(@NotNull final Map<String, Object> attributeMap) {
+    public static void updateUserAttributes(@NonNull final Map<String, Object> attributeMap) {
         if (attributeMap == null || attributeMap.isEmpty()) {
             Log.debug(LOG_TAG, CLASS_NAME, "updateUserAttributes - the given attribute map is null or empty, no event was dispatched");
             return;
@@ -104,7 +105,7 @@ public class UserProfile {
      *                       primitive types, Maps and Lists are supported.
      */
     @Deprecated
-    public static void updateUserAttribute(@NotNull final String attributeName, @Nullable final Object attributeValue) {
+    public static void updateUserAttribute(@NonNull final String attributeName, @Nullable final Object attributeValue) {
         if (attributeName == null || attributeName.isEmpty()) {
             Log.debug(LOG_TAG, CLASS_NAME, "updateUserAttributes - attributeName is null or empty, no event was dispatched");
             return;
@@ -124,7 +125,7 @@ public class UserProfile {
      * @param attributeName A {@link String} attribute key which has to be removed.
      */
     @Deprecated
-    public static void removeUserAttribute(@NotNull final String attributeName) {
+    public static void removeUserAttribute(@NonNull final String attributeName) {
         if (attributeName == null || attributeName.isEmpty()) {
             Log.debug(LOG_TAG, CLASS_NAME, "updateUserAttributes - attributeName is null or empty, no event was dispatched");
             return;
@@ -144,7 +145,7 @@ public class UserProfile {
      *
      * @param attributeNames A List of attribute keys which have to be removed.
      */
-    public static void removeUserAttributes(@NotNull final List<String> attributeNames) {
+    public static void removeUserAttributes(@NonNull final List<String> attributeNames) {
         if (attributeNames == null || attributeNames.isEmpty()) {
             Log.debug(LOG_TAG, CLASS_NAME, "removeUserAttributes - the given attribute map is null or empty, no event was dispatched");
             return;
@@ -169,7 +170,7 @@ public class UserProfile {
      *                 retrieved from memory
      */
     @SuppressWarnings("rawtypes")
-    public static void getUserAttributes(@NotNull final List<String> keys, @NotNull final AdobeCallback<Map<String, Object>> callback) {
+    public static void getUserAttributes(@NonNull final List<String> keys, @NonNull final AdobeCallback<Map<String, Object>> callback) {
 
         if (callback == null) {
             Log.debug(LOG_TAG, CLASS_NAME, "getUserAttributes - the given AdobeCallback is null, no event was dispatched");
