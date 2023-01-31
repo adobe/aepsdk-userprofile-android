@@ -47,7 +47,7 @@ publishing {
             artifactId = rootProject.moduleName
             version = version
             artifact("$buildDir/outputs/aar/${rootProject.moduleAARName}")
-            //artifact javadocPublish
+            artifact javadocPublish
 
             pom {
                 name = mavenRepoName

@@ -27,7 +27,10 @@ jobs:
       - run:
           name: publish jitpack build to local repository
           command: |
-            make identity-publish-maven-local-jitpack
+            make userprofile-publish-maven-local-jitpack
+
+      - store_artifacts:
+          path: code/userprofile/build/libs
 
       - run:
           name: build test app
@@ -72,7 +75,7 @@ jobs:
               shasum -a $i -c --ignore-missing <(curl -s "https://raw.githubusercontent.com/codecov/codecov-bash/${VERSION}/SHA${i}SUM") ||
               shasum -a $i -c <(curl -s "https://raw.githubusercontent.com/codecov/codecov-bash/${VERSION}/SHA${i}SUM" | grep -w "codecov")
             done
-            bash ./codecov -v -X s3 -c -D "./code/android-userprofile-library/build/reports/coverage/test/phone/debug" -F unit-tests
+            bash ./codecov -v -X s3 -c -D "./code/userprofile/build/reports/coverage/test/phone/debug" -F unit-tests
 
   functional-test:
     executor:
@@ -113,7 +116,7 @@ jobs:
               shasum -a $i -c --ignore-missing <(curl -s "https://raw.githubusercontent.com/codecov/codecov-bash/${VERSION}/SHA${i}SUM") ||
               shasum -a $i -c <(curl -s "https://raw.githubusercontent.com/codecov/codecov-bash/${VERSION}/SHA${i}SUM" | grep -w "codecov")
             done
-            bash ./codecov -v -X s3 -c -D "./code/android-userprofile-library/build/reports/coverage/androidTest/phone/debug" -F functional-tests
+            bash ./codecov -v -X s3 -c -D "./code/userprofile/build/reports/coverage/androidTest/phone/debug" -F functional-tests
       - android/save-gradle-cache:
           cache-prefix: v1a
 
