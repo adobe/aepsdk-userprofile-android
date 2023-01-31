@@ -2,7 +2,7 @@
 
 ## Before starting
 
-UserProfile extension has a dependency on [AEP Core SDK](https://github.com/adobe/aepsdk-core-ios#readme) which must be installed to use the extension.
+UserProfile extension has a dependency on [AEP Core SDK](https://github.com/adobe/aepsdk-core-android#readme) which must be installed to use the extension.
 
 ## Add UserProfile extension to your app
 
