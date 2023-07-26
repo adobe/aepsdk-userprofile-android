@@ -60,7 +60,7 @@ public class UserProfileExtensionTests {
 
     @Test
     public void test_getVersion() {
-        assertEquals("2.0.0", userProfileExtension.getVersion());
+        assertEquals("2.0.1", userProfileExtension.getVersion());
     }
 
     @Test

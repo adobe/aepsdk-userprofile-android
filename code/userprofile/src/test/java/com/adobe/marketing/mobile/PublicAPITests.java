@@ -43,7 +43,7 @@ public class PublicAPITests {
 
     @Test
     public void test_extensionVersion() {
-        assertEquals("2.0.0", UserProfile.extensionVersion());
+        assertEquals("2.0.1", UserProfile.extensionVersion());
     }
 
 
