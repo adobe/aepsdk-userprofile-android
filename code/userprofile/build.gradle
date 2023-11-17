@@ -6,6 +6,8 @@ plugins {
 apply from: 'release.gradle'
 
 android {
+    namespace 'com.adobe.marketing.mobile.userprofile'
+
     compileSdk 33
 
     defaultConfig {
@@ -16,7 +18,7 @@ android {
         consumerProguardFiles "consumer-rules.pro"
     }
 
-    flavorDimensions "target"
+    flavorDimensions = ["target"]
 
     productFlavors {
         phone {
@@ -32,6 +34,13 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    publishing {
+        singleVariant('release') {
+            withSourcesJar()
+            withJavadocJar()
         }
     }
 
@@ -61,7 +70,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 }
 
-tasks.withType(Test) {
+tasks.withType(Test).configureEach {
     testLogging {
         showStandardStreams = true
     }
@@ -69,7 +78,8 @@ tasks.withType(Test) {
     jacoco.excludes = ['jdk.internal.*']
 }
 
-task codeCoverageReport(type: JacocoReport, dependsOn: ['testPhoneDebugUnitTest', 'createPhoneDebugCoverageReport']) {
+tasks.register('codeCoverageReport', JacocoReport) {
+    dependsOn['testPhoneDebugUnitTest', 'createPhoneDebugCoverageReport']
     def excludeRegex = ['**/ADB*.class', '**/BuildConfig.class']
     def debugTree = fileTree(dir: "${project.buildDir}/intermediates/javac/phoneDebug/classes", excludes: excludeRegex)
 
@@ -87,7 +97,8 @@ task codeCoverageReport(type: JacocoReport, dependsOn: ['testPhoneDebugUnitTest'
     }
 }
 
-task unitTestsCoverageReport(type: JacocoReport, dependsOn: "testPhoneDebugUnitTest") {
+tasks.register('unitTestsCoverageReport', JacocoReport) {
+    dependsOn "testPhoneDebugUnitTest"
     def excludeRegex = ['**/ADB*.class', '**/BuildConfig.class']
     def debugTree = fileTree(dir: "${project.buildDir}/intermediates/javac/phoneDebug/classes", excludes: excludeRegex)
 
@@ -98,13 +109,14 @@ task unitTestsCoverageReport(type: JacocoReport, dependsOn: "testPhoneDebugUnitT
             "outputs/unit_test_code_coverage/phoneDebugUnitTest/*.exec"
     ])
     reports {
-        xml.enabled true
-        csv.enabled false
-        html.enabled true
+        xml.required = true
+        csv.required = false
+        html.required = true
     }
 }
 
-task functionalTestsCoverageReport(type: JacocoReport, dependsOn: "createPhoneDebugCoverageReport") {
+tasks.register('functionalTestsCoverageReport', JacocoReport) {
+    dependsOn "createPhoneDebugCoverageReport"
     def excludeRegex = ['**/ADB*.class', '**/BuildConfig.class']
     def debugTree = fileTree(dir: "${project.buildDir}/intermediates/javac/phoneDebug/classes", excludes: excludeRegex)
 
@@ -115,9 +127,9 @@ task functionalTestsCoverageReport(type: JacocoReport, dependsOn: "createPhoneDe
             "outputs/code_coverage/phoneDebugAndroidTest/connected/*coverage.ec"
     ])
     reports {
-        xml.enabled true
-        csv.enabled false
-        html.enabled true
+        xml.required = true
+        csv.required = false
+        html.required = true
     }
 }
 

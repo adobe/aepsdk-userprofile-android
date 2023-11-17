@@ -1,3 +1,2 @@
-include ':userprofile'
 rootProject.name = "aepsdk-userprofile-android"
-include ':testapp'
+include ("userprofile", "testapp")
