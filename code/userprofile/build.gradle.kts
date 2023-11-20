@@ -1,10 +1,8 @@
 plugins {
     id("com.android.library")
     jacoco
-}
-
-apply {
-    from("release.gradle")
+    signing
+    `maven-publish`
 }
 
 android {
@@ -136,6 +134,135 @@ tasks.register<JacocoReport>("functionalTestsCoverageReport") {
             )
         )
     )
+}
+
+android.libraryVariants.configureEach {
+    tasks.withType(Javadoc::class.java).configureEach {
+        val mainSourceSet = android.sourceSets.getByName("main")
+        val phoneSourceSet = android.sourceSets.getByName("phone")
+        val mainSourceDirs = mainSourceSet.java.srcDirs
+        val phoneSourceDirs = phoneSourceSet.java.srcDirs
+
+        source = fileTree(mainSourceDirs).plus(fileTree(phoneSourceDirs))
+        ext.set(
+            "androidJar",
+            "${android.sdkDirectory}/platforms/${android.compileSdkVersion}/android.jar"
+        )
+
+        doFirst {
+            classpath =
+                files(javaCompileProvider.get().classpath.files) + files(ext.get("androidJar"))
+        }
+
+        exclude("**/BuildConfig.java", "**/R.java")
+        options {
+            memberLevel = JavadocMemberLevel.PUBLIC
+        }
+    }
+}
+
+tasks.register<Javadoc>("javadoc") {
+    options.memberLevel = JavadocMemberLevel.PUBLIC
+}
+
+tasks.register<Jar>("javadocPublish") {
+    from(tasks.getByName<Javadoc>("javadoc"))
+    archiveClassifier.set("javadoc")
+}
+
+tasks.named("publish").configure {
+    dependsOn(tasks.named("assemblePhone"))
+}
+
+// TODO: Cleanup with objects to hold constants and utils
+val isJitPackBuild: Boolean = project.hasProperty("jitpack")
+val groupIdForPublish =
+    if (isJitPackBuild) "com.github.adobe.aepsdk-userprofile-android" else "com.adobe.marketing.mobile"
+val isReleaseBuild: Boolean = project.hasProperty("release")
+val moduleVersion: String by project
+val moduleName: String by project
+val mavenRepoName: String by project
+val moduleAARName: String by project
+val mavenRepoDescription: String by project
+val mavenCoreVersion: String by project
+val versionToUse: String = if (isReleaseBuild) moduleVersion else "${moduleVersion}-SNAPSHOT"
+val isSnapshot: Boolean = versionToUse.endsWith("SNAPSHOT")
+
+configure<PublishingExtension> {
+    publications {
+        create<MavenPublication>("release") {
+            groupId = groupIdForPublish
+            artifactId = moduleName
+            version = versionToUse
+
+            artifact("$buildDir/outputs/aar/$moduleAARName}")
+            artifact(tasks.getByName<Jar>("javadocPublish"))
+
+            pom {
+                name.set(mavenRepoName)
+                description.set(mavenRepoDescription)
+                url.set("https://developer.adobe.com/client-sdks")
+
+                licenses {
+                    license {
+                        name.set("The Apache License, Version 2.0")
+                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                        distribution.set("repo")
+                    }
+                }
+
+                developers {
+                    developer {
+                        id.set("adobe")
+                        name.set("adobe")
+                        email.set("adobe-mobile-testing@adobe.com")
+                    }
+                }
+
+                scm {
+                    connection.set("scm:git:github.com//adobe/aepsdk-userprofile-android.git")
+                    developerConnection.set("scm:git:ssh://github.com//adobe/aepsdk-userprofile-android.git")
+                    url.set("https://github.com/adobe/aepsdk-userprofile-android")
+                }
+
+                withXml {
+                    val dependenciesNode = asNode().appendNode("dependencies")
+
+                    val coreDependencyNode = dependenciesNode.appendNode("dependency")
+                    coreDependencyNode.appendNode("groupId", "com.adobe.marketing.mobile")
+                    coreDependencyNode.appendNode("artifactId", "core")
+                    coreDependencyNode.appendNode("version", mavenCoreVersion)
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            name = "sonatype"
+            url =
+                uri(if (isSnapshot) "https://oss.sonatype.org/content/repositories/snapshots/" else "https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+            credentials {
+                username = System.getenv("SONATYPE_USERNAME")
+                password = System.getenv("SONATYPE_PASSWORD")
+            }
+        }
+    }
+}
+
+extra["signing.gnupg.executable"] = "gpg"
+extra["signing.gnupg.keyName"] = System.getenv("GPG_KEY_ID")
+extra["signing.gnupg.passphrase"] = System.getenv("GPG_PASSPHRASE")
+
+signing {
+    useGpgCmd()
+
+    setRequired(
+        tasks.withType<PublishToMavenRepository>().find {
+            gradle.taskGraph.hasTask(it)
+        }
+    )
+
+    sign(publishing.publications)
 }
 
 /**
