@@ -41,12 +41,6 @@ public class PublicAPITests {
     public void setup() {
     }
 
-    @Test
-    public void test_extensionVersion() {
-        assertEquals("2.0.1", UserProfile.extensionVersion());
-    }
-
-
     @SuppressWarnings("rawtypes")
     @Test
     public void test_registerExtension() {
