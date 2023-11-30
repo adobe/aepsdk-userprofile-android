@@ -1,4 +1,4 @@
-name: Publish package to the Maven Central Repository
+name: Publish Snapshot
 on:
   push:
     branches:
@@ -25,7 +25,7 @@ jobs:
         run: |
           echo $GPG_SECRET_KEYS | base64 --decode | gpg --import --no-tty --batch --yes
           echo $GPG_OWNERTRUST | base64 --decode | gpg --import-ownertrust --no-tty --batch --yes
-      - name: Publish to maven central staging repository
+      - name: Publish to Maven Central Repository
         run: make ci-publish-staging
         env:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}

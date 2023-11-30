@@ -14,7 +14,7 @@ functional-test-coverage:
 javadoc:
 		(./code/gradlew -p code/userprofile javadocPublish)
 
-publish: build-release
+ci-publish: build-release
 		(./code/gradlew -p code/userprofile  publishReleasePublicationToSonatypeRepository -Prelease)
 
 assemble-phone:

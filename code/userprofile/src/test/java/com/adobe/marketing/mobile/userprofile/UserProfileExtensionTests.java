@@ -27,6 +27,7 @@ import static org.mockito.Mockito.when;
 import com.adobe.marketing.mobile.Event;
 import com.adobe.marketing.mobile.ExtensionApi;
 import com.adobe.marketing.mobile.ExtensionErrorCallback;
+import com.adobe.marketing.mobile.UserProfile;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -60,7 +61,7 @@ public class UserProfileExtensionTests {
 
     @Test
     public void test_getVersion() {
-        assertEquals("2.0.1", userProfileExtension.getVersion());
+        assertEquals(UserProfile.extensionVersion(), userProfileExtension.getVersion());
     }
 
     @Test
