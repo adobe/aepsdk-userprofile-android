@@ -26,17 +26,25 @@ help()
    exit 1 # Exit script after printing help
 }
 
+sed_platform() {
+    # Ensure sed works properly in linux and mac-os.
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        sed -i '' "$@"
+    else
+        sed -i "$@"
+    fi
+}
 
 update() {
     echo "Changing version to $VERSION"
 
     # Replace version in Constants file
     echo "Changing 'EXTENSION_VERSION' to '$VERSION' in '$CONSTANTS_FILE'"    
-    sed -i '' -E "/$EXTENSION_VERSION_REGEX/{s/$VERSION_REGEX/$VERSION/;}" $CONSTANTS_FILE
+    sed_platform -E "/$EXTENSION_VERSION_REGEX/{s/$VERSION_REGEX/$VERSION/;}" $CONSTANTS_FILE
 
     # Replace version in Constants file
     echo "Changing 'moduleVersion' to '$VERSION' in '$GRADLE_PROPERTIES_FILE'"
-    sed -i '' -E "/^moduleVersion/{s/$VERSION_REGEX/$VERSION/;}" $GRADLE_PROPERTIES_FILE  
+    sed_platform -E "/^moduleVersion/{s/$VERSION_REGEX/$VERSION/;}" $GRADLE_PROPERTIES_FILE  
 
     # Replace dependencies in gradle.properties
     if [ "$DEPENDENCIES" != "none" ]; then
@@ -51,7 +59,7 @@ update() {
 
             if [ "$dependencyVersion" != "" ]; then
                 echo "Changing 'maven${dependencyName}Version' to '$dependencyVersion' in '$GRADLE_PROPERTIES_FILE'"            
-                sed -i '' -E "/^maven${dependencyName}Version/{s/$VERSION_REGEX/$dependencyVersion/;}" $GRADLE_PROPERTIES_FILE  
+                sed_platform -E "/^maven${dependencyName}Version/{s/$VERSION_REGEX/$dependencyVersion/;}" $GRADLE_PROPERTIES_FILE  
             fi        
         done
     fi
@@ -60,7 +68,6 @@ update() {
 verify() {    
     echo "Verifing version is $VERSION"
 
-    CONSTANTS_FILE=$ROOT_DIR"/code/userprofile/src/phone/java/com/adobe/marketing/mobile/UserProfile.java"
     if ! grep -E "$EXTENSION_VERSION_REGEX\"$VERSION\"" "$CONSTANTS_FILE" >/dev/null; then
         echo "'EXTENSION_VERSION' does not match '$VERSION' in '$CONSTANTS_FILE'"            
         exit 1
