@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Make this script executable from terminal:
-# chmod 755 update-versions.sh
+# chmod 755 version.sh
 set -e # Any subsequent(*) commands which fail will cause the shell script to exit immediately
 
 ROOT_DIR=$(git rev-parse --show-toplevel)
@@ -13,7 +13,7 @@ CONSTANTS_FILE=$ROOT_DIR"/code/userprofile/src/phone/java/com/adobe/marketing/mo
 # Java files
 EXTENSION_VERSION_REGEX="^.*String EXTENSION_VERSION *= *"
 # Kotlin files
-#EXTENSION_VERSION_REGEX="/^ +const val VERSION *= *"
+#EXTENSION_VERSION_REGEX="^ +const val VERSION *= *"
 
 help()
 {
@@ -42,7 +42,7 @@ update() {
     echo "Changing 'EXTENSION_VERSION' to '$VERSION' in '$CONSTANTS_FILE'"    
     sed_platform -E "/$EXTENSION_VERSION_REGEX/{s/$VERSION_REGEX/$VERSION/;}" $CONSTANTS_FILE
 
-    # Replace version in Constants file
+    # Replace version in gradle.properties
     echo "Changing 'moduleVersion' to '$VERSION' in '$GRADLE_PROPERTIES_FILE'"
     sed_platform -E "/^moduleVersion/{s/$VERSION_REGEX/$VERSION/;}" $GRADLE_PROPERTIES_FILE  
 

@@ -12,7 +12,7 @@ on:
         required: false
 
 jobs:
-  update-versions:
+  update-version:
     runs-on: ubuntu-latest
 
     steps:    
@@ -20,7 +20,7 @@ jobs:
       uses: actions/checkout@v3.1.0
     
     - name: Update UserProfile
-      run: (./scripts/versions.sh -u -v ${{ github.event.inputs.version }} -d "Core ${{ github.event.inputs.core-dependency }}")
+      run: (./scripts/version.sh -u -v ${{ github.event.inputs.version }} -d "Core ${{ github.event.inputs.core-dependency }}")
 
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v5

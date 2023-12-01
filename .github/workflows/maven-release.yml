@@ -30,11 +30,11 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
 
-      - name: Verify versions        
+      - name: Verify version        
         run: |
           set -eo pipefail
           echo Release version: ${{ github.event.inputs.tag }}
-          (./scripts/versions.sh -v ${{ github.event.inputs.tag }})
+          (./scripts/version.sh -v ${{ github.event.inputs.tag }})
 
       - name: Create GH Release
         id: create_release
