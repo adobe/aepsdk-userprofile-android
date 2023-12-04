@@ -3,16 +3,18 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
-val composeVersion = "1.2.0"
+val composeVersion: String by rootProject.extra
+val kotlinVersion: String by rootProject.extra
+
 android {
-    compileSdk = 33
+    compileSdk = rootProject.extra["compileSdkVersion"] as Int
 
     defaultConfig {
         applicationId = "com.adobe.mobile.marketing.aep.testapp"
-        minSdk = 21
-        targetSdk = 33
-        versionCode = 1
-        versionName = "1.0"
+        minSdk = rootProject.extra["minSdkVersion"] as Int
+        targetSdk = rootProject.extra["targetSdkVersion"] as Int
+        versionCode = rootProject.extra["versionCode"] as Int
+        versionName = rootProject.extra["versionName"] as String
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -24,31 +26,39 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
+
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = rootProject.extra["sourceCompatibility"] as JavaVersion
+        targetCompatibility = rootProject.extra["targetCompatibility"] as JavaVersion
     }
+
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = rootProject.extra["kotlinJvmTarget"] as String
+        languageVersion = rootProject.extra["kotlinLanguageVersion"] as String
+        apiVersion = rootProject.extra["kotlinApiVersion"] as String
     }
+
     buildFeatures {
         compose = true
     }
+
     composeOptions {
         kotlinCompilerExtensionVersion = composeVersion
     }
-    packagingOptions {
+
+    packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
     defaultConfig {
         namespace = "com.adobe.mobile.marketing.aep.testapp"
     }
 }
 
 dependencies {
-    implementation("androidx.core:core-ktx:1.7.0")
+    implementation("androidx.core:core-ktx:${kotlinVersion}")
     implementation("androidx.compose.ui:ui:$composeVersion")
     implementation("androidx.compose.material:material:$composeVersion")
     implementation("androidx.compose.ui:ui-tooling-preview:$composeVersion")
