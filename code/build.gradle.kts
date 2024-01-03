@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application") version BuildConstants.Plugins.ANDROID_GRADLE_PLUGIN_VERSION apply false
     id("org.jetbrains.kotlin.android") version BuildConstants.Plugins.KOTLIN_GRADLE_PLUGIN_VERSION apply false
+    id("com.diffplug.gradle.spotless") version BuildConstants.Plugins.SPOTLESS_GRADLE_PLUGIN_VERSION apply false
 }
 
 extra.apply {

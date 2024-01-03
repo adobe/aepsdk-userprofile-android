@@ -4,6 +4,8 @@ plugins {
     jacoco
     signing
     `maven-publish`
+    id("com.diffplug.spotless")
+
 }
 
 val buildUtils = BuildUtils()
@@ -86,7 +88,7 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
 }
 
-// Gradle Tasks
+// ============= Gradle Tasks ============= //
 tasks.withType<Test>().configureEach {
     testLogging {
         showStandardStreams = true
@@ -159,6 +161,26 @@ tasks.register<Jar>("javadocPublish") {
 
 tasks.named("publish").configure {
     dependsOn(tasks.named("assemblePhone"))
+}
+
+// ============= Gradle Extensions ============= //
+
+spotless {
+    java {
+        toggleOffOn("format:off", "format:on")
+        target(BuildConstants.Formatting.JAVA_TARGETS)
+        removeUnusedImports()
+        googleJavaFormat(BuildConstants.Formatting.GOOGLE_JAVA_FORMAT_VERSION).aosp().reflowLongStrings()
+        endWithNewline()
+        formatAnnotations()
+        licenseHeaderFile(BuildConstants.Formatting.LICENSE_HEADER_PATH)
+    }
+    kotlin {
+        target(BuildConstants.Formatting.KOTLIN_TARGETS)
+        ktlint(BuildConstants.Formatting.KTLINT_VERSION)
+        endWithNewline()
+        licenseHeaderFile(BuildConstants.Formatting.LICENSE_HEADER_PATH)
+    }
 }
 
 configure<PublishingExtension> {
@@ -234,6 +256,8 @@ signing {
     sign(publishing.publications)
 }
 
+
+// ============= Helpers ============= //
 class BuildUtils {
     /**
      * The group id to use for the build

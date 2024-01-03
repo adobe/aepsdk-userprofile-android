@@ -8,6 +8,7 @@ object BuildConstants {
     object Plugins {
         const val ANDROID_GRADLE_PLUGIN_VERSION = "8.2.0"
         const val KOTLIN_GRADLE_PLUGIN_VERSION = "1.7.0"
+        const val SPOTLESS_GRADLE_PLUGIN_VERSION = "6.11.0"
     }
 
     object ProjectConfig {
@@ -25,6 +26,14 @@ object BuildConstants {
         const val KOTLIN_LANGUAGE_VERSION = "1.5"
         const val KOTLIN_API_VERSION = "1.5"
         const val KOTLIN_JVM_TARGET = "1.8"
+    }
+
+    object Formatting {
+        const val KTLINT_VERSION = "0.42.1"
+        const val GOOGLE_JAVA_FORMAT_VERSION = "1.15.0"
+        const val JAVA_TARGETS = "src/*/java/**/*.java"
+        const val KOTLIN_TARGETS = "src/*/java/**/*.kt"
+        const val LICENSE_HEADER_PATH = "../../config/formatter/adobe.header.txt"
     }
 
     object Publishing {
