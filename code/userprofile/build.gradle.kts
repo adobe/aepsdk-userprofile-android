@@ -11,10 +11,10 @@ val buildUtils = BuildUtils()
 android {
     namespace = "com.adobe.marketing.mobile.userprofile"
 
-    compileSdk = rootProject.extra["compileSdkVersion"] as Int
+    compileSdk = BuildConstants.ProjectConfig.COMPILE_SDK_VERSION
 
     defaultConfig {
-        minSdk = rootProject.extra["minSdkVersion"] as Int
+        minSdk = BuildConstants.ProjectConfig.MIN_SDK_VERSION
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -24,27 +24,27 @@ android {
         buildConfig = true
     }
 
-    flavorDimensions.add("target")
+    flavorDimensions.add(BuildConstants.BuildDimensions.TARGET)
     productFlavors {
-        create("phone") {
-            dimension = "target"
+        create(BuildConstants.ProductFlavors.PHONE) {
+            dimension = BuildConstants.BuildDimensions.TARGET
         }
     }
 
     buildTypes {
-        getByName("debug") {
+        getByName(BuildConstants.BuildTypes.DEBUG) {
             enableAndroidTestCoverage = true
             enableUnitTestCoverage = true
         }
 
-        getByName("release") {
+        getByName(BuildConstants.BuildTypes.RELEASE) {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
     }
 
     publishing {
-        singleVariant("release") {
+        singleVariant(BuildConstants.BuildTypes.RELEASE) {
             withSourcesJar()
             withJavadocJar()
         }
@@ -55,14 +55,14 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = rootProject.extra["sourceCompatibility"] as JavaVersion
-        targetCompatibility = rootProject.extra["targetCompatibility"] as JavaVersion
+        sourceCompatibility = BuildConstants.ProjectConfig.JAVA_SOURCE_COMPATIBILITY
+        targetCompatibility = BuildConstants.ProjectConfig.JAVA_TARGET_COMPATIBILITY
     }
 
     kotlinOptions {
-        jvmTarget = rootProject.extra["kotlinJvmTarget"] as String
-        languageVersion = rootProject.extra["kotlinLanguageVersion"] as String
-        apiVersion = rootProject.extra["kotlinApiVersion"] as String
+        jvmTarget = BuildConstants.ProjectConfig.KOTLIN_JVM_TARGET
+        languageVersion = BuildConstants.ProjectConfig.KOTLIN_LANGUAGE_VERSION
+        apiVersion = BuildConstants.ProjectConfig.KOTLIN_API_VERSION
     }
 }
 
@@ -106,7 +106,7 @@ tasks.register<JacocoReport>("unitTestCoverageReport") {
         fileTree(
             mapOf(
                 "dir" to "$buildDir",
-                "includes" to listOf(BuildUtils.UNIT_TEST_EXECUTION_RESULTS_REGEX)
+                "includes" to listOf(BuildConstants.Reporting.UNIT_TEST_EXECUTION_RESULTS_REGEX)
             )
         )
     )
@@ -121,7 +121,7 @@ tasks.register<JacocoReport>("functionalTestsCoverageReport") {
         fileTree(
             mapOf(
                 "dir" to "$buildDir",
-                "includes" to listOf(BuildUtils.FUNCTIONAL_TEST_EXECUTION_RESULTS_REGEX)
+                "includes" to listOf(BuildConstants.Reporting.FUNCTIONAL_TEST_EXECUTION_RESULTS_REGEX)
             )
         )
     )
@@ -129,8 +129,8 @@ tasks.register<JacocoReport>("functionalTestsCoverageReport") {
 
 android.libraryVariants.configureEach {
     tasks.withType(Javadoc::class.java).configureEach {
-        val mainSourceSet = android.sourceSets.getByName(BuildUtils.MAIN_SOURCE_SET)
-        val phoneSourceSet = android.sourceSets.getByName(BuildUtils.PHONE_SOURCE_SET)
+        val mainSourceSet = android.sourceSets.getByName(BuildConstants.SourceSets.MAIN)
+        val phoneSourceSet = android.sourceSets.getByName(BuildConstants.SourceSets.PHONE)
         val mainSourceDirs = mainSourceSet.java.srcDirs.first()
         val phoneSourceDirs = phoneSourceSet.java.srcDirs.first()
 
@@ -141,7 +141,7 @@ android.libraryVariants.configureEach {
                 files(javaCompileProvider.get().classpath.files) + files(buildUtils.androidJarPath)
         }
 
-        exclude(BuildUtils.BUILD_CONFIG_CLASS, BuildUtils.R_CLASS)
+        exclude(BuildConstants.Reporting.BUILD_CONFIG_CLASS, BuildConstants.Reporting.R_CLASS)
         options {
             memberLevel = JavadocMemberLevel.PUBLIC
         }
@@ -163,7 +163,7 @@ tasks.named("publish").configure {
 
 configure<PublishingExtension> {
     publications {
-        create<MavenPublication>("release") {
+        create<MavenPublication>(BuildConstants.BuildTypes.RELEASE) {
             groupId = buildUtils.groupId
             artifactId = buildUtils.moduleName
             version = buildUtils.versionToUse
@@ -174,28 +174,28 @@ configure<PublishingExtension> {
             pom {
                 name.set(buildUtils.mavenRepoName)
                 description.set(buildUtils.mavenRepoDescription)
-                url.set(BuildUtils.DEVELOPER_DOC_URL)
+                url.set(BuildConstants.Publishing.DEVELOPER_DOC_URL)
 
                 licenses {
                     license {
-                        name.set(BuildUtils.LICENSE_NAME)
-                        url.set(BuildUtils.LICENSE_URL)
-                        distribution.set(BuildUtils.LICENSE_DIST)
+                        name.set(BuildConstants.Publishing.LICENSE_NAME)
+                        url.set(BuildConstants.Publishing.LICENSE_URL)
+                        distribution.set(BuildConstants.Publishing.LICENSE_DIST)
                     }
                 }
 
                 developers {
                     developer {
-                        id.set(BuildUtils.DEVELOPER_ID)
-                        name.set(BuildUtils.DEVELOPER_NAME)
-                        email.set(BuildUtils.DEVELOPER_EMAIL)
+                        id.set(BuildConstants.Publishing.DEVELOPER_ID)
+                        name.set(BuildConstants.Publishing.DEVELOPER_NAME)
+                        email.set(BuildConstants.Publishing.DEVELOPER_EMAIL)
                     }
                 }
 
                 scm {
-                    connection.set(BuildUtils.SCM_CONNECTION_URL)
-                    developerConnection.set(BuildUtils.SCM_CONNECTION_URL)
-                    url.set(BuildUtils.SCM_REPO_URL)
+                    connection.set(BuildConstants.Publishing.SCM_CONNECTION_URL)
+                    developerConnection.set(BuildConstants.Publishing.SCM_CONNECTION_URL)
+                    url.set(BuildConstants.Publishing.SCM_REPO_URL)
                 }
 
                 withXml {
@@ -235,37 +235,6 @@ signing {
 }
 
 class BuildUtils {
-    companion object {
-        const val SNAPSHOTS_URL = "https://oss.sonatype.org/content/repositories/snapshots/"
-        const val RELEASES_URL = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-
-        const val RELEASE_PROPERTY = "release"
-        const val JITPACK_PROPERTY = "jitpack"
-        const val SNAPSHOT_SUFFIX = "SNAPSHOT"
-        const val MAIN_SOURCE_SET = "main"
-        const val PHONE_SOURCE_SET = "phone"
-        const val UNIT_TEST_EXECUTION_RESULTS_REGEX =
-            "outputs/unit_test_code_coverage/phoneDebugUnitTest/*.exec"
-        const val FUNCTIONAL_TEST_EXECUTION_RESULTS_REGEX =
-            "outputs/code_coverage/phoneDebugAndroidTest/connected/*coverage.ec"
-
-        const val LICENSE_NAME = "The Apache License, Version 2.0"
-        const val LICENSE_URL = "http://www.apache.org/licenses/LICENSE-2.0.txt"
-        const val LICENSE_DIST = "repo"
-
-        const val DEVELOPER_ID = "adobe"
-        const val DEVELOPER_NAME = "adobe"
-        const val DEVELOPER_EMAIL = "adobe-mobile-testing@adobe.com"
-        const val DEVELOPER_DOC_URL = "https://developer.adobe.com/client-sdks"
-
-        const val SCM_CONNECTION_URL = "scm:git:github.com//adobe/aepsdk-userprofile-android.git"
-        const val SCM_REPO_URL = "https://github.com/adobe/aepsdk-userprofile-android"
-
-        const val BUILD_CONFIG_CLASS = "**/BuildConfig.java"
-        const val R_CLASS = "**/R.java"
-        const val ADB_CLASS = "**/ADB*.class"
-    }
-
     /**
      * The group id to use for the build
      */
@@ -273,7 +242,6 @@ class BuildUtils {
         if (isJitPackBuild()) "com.github.adobe.aepsdk-userprofile-android" else "com.adobe.marketing.mobile"
 
     // project properties via delegation
-    val compileSdkVersion: Int by project
     val moduleVersion: String by project
     val moduleName: String by project
     val mavenRepoName: String by project
@@ -290,30 +258,30 @@ class BuildUtils {
      * The android jar path based on the compile sdk version
      */
     val androidJarPath: String =
-        "${android.sdkDirectory}/platforms/android-$compileSdkVersion/android.jar"
+        "${android.sdkDirectory}/platforms/android-${BuildConstants.ProjectConfig.COMPILE_SDK_VERSION}/android.jar"
 
     /**
      * Verifies if the current build is a release build
      */
-    private fun isReleaseBuild(): Boolean = project.hasProperty(RELEASE_PROPERTY)
+    private fun isReleaseBuild(): Boolean = project.hasProperty(BuildConstants.Publishing.RELEASE_PROPERTY)
 
     /**
      * Verifies if the current build is a snapshot build
      */
-    private fun isSnapshotBuild(): Boolean = versionToUse.endsWith(SNAPSHOT_SUFFIX)
+    private fun isSnapshotBuild(): Boolean = versionToUse.endsWith(BuildConstants.Publishing.SNAPSHOT_SUFFIX)
 
     /**
      * Verifies if the current build is a jitpack build
      */
-    private fun isJitPackBuild(): Boolean = project.hasProperty(JITPACK_PROPERTY)
+    private fun isJitPackBuild(): Boolean = project.hasProperty(BuildConstants.Publishing.JITPACK_PROPERTY)
 
     /**
      * Returns the publish url based on the build type
      */
     fun getPublishUrl(): String = if (isSnapshotBuild()) {
-        SNAPSHOTS_URL
+        BuildConstants.Publishing.SNAPSHOTS_URL
     } else {
-        RELEASES_URL
+        BuildConstants.Publishing.RELEASES_URL
     }
 }
 
@@ -321,20 +289,20 @@ class BuildUtils {
  * Extension to add the sources to the jacoco report
  */
 fun JacocoReport.addSourceSets() {
-    val mainSourceSet = android.sourceSets.getByName(BuildUtils.MAIN_SOURCE_SET)
+    val mainSourceSet = android.sourceSets.getByName(BuildConstants.SourceSets.MAIN)
     val mainSourceDir = mainSourceSet.java.srcDirs
     sourceDirectories.setFrom(files(mainSourceDir))
 
     val debugTree = fileTree(
         mapOf(
             "dir" to "$buildDir/intermediates/javac/phoneDebug/classes/com/adobe/marketing/mobile",
-            "excludes" to listOf(BuildUtils.ADB_CLASS, BuildUtils.BUILD_CONFIG_CLASS)
+            "excludes" to listOf(BuildConstants.Reporting.ADB_CLASS, BuildConstants.Reporting.BUILD_CONFIG_CLASS)
         )
     )
 
     additionalClassDirs.setFrom(files(debugTree))
 
-    val phoneSourceSet = android.sourceSets.getByName(BuildUtils.PHONE_SOURCE_SET)
+    val phoneSourceSet = android.sourceSets.getByName(BuildConstants.SourceSets.PHONE)
     val phoneSourceDir = phoneSourceSet.java.srcDirs
     additionalSourceDirs.setFrom(files(phoneSourceDir))
 }

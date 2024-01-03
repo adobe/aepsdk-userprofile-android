@@ -1,25 +1,10 @@
 plugins {
-    id("com.android.application") version "8.2.0" apply false
-    id("org.jetbrains.kotlin.android") version "1.7.0" apply false
+    id("com.android.application") version BuildConstants.Plugins.ANDROID_GRADLE_PLUGIN_VERSION apply false
+    id("org.jetbrains.kotlin.android") version BuildConstants.Plugins.KOTLIN_GRADLE_PLUGIN_VERSION apply false
 }
 
 extra.apply {
-    set("minSdkVersion", 21)
-    set("compileSdkVersion", 34)
-    set("targetSdkVersion", 34)
-    set("versionCode", 1)
-    set("versionName", "1.0")
-
-    set("sourceCompatibility", JavaVersion.VERSION_1_8)
-    set("targetCompatibility", JavaVersion.VERSION_1_8)
-
-    set("kotlinVersion", "1.7.0")
-    set("composeVersion", "1.2.0")
-    set("kotlinLanguageVersion", "1.5")
-    set("kotlinApiVersion", "1.5")
-    set("kotlinJvmTarget", JavaVersion.VERSION_1_8.toString())
-
-    set("signing.gnupg.executable", "gpg")
-    set("signing.gnupg.keyName", System.getenv("GPG_KEY_ID"))
-    set("signing.gnupg.passphrase", System.getenv("GPG_PASSPHRASE"))
+    set("signing.gnupg.executable", BuildConstants.Publishing.SIGNING_GNUPG_EXECUTABLE)
+    set("signing.gnupg.keyName", BuildConstants.Publishing.SIGNING_GNUPG_KEY_NAME)
+    set("signing.gnupg.passphrase", BuildConstants.Publishing.SIGNING_GNUPG_PASSPHRASE)
 }
