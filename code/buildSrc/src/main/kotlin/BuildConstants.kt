@@ -5,6 +5,8 @@ import org.gradle.api.JavaVersion
  */
 object BuildConstants {
 
+    const val PROJECT_NAMESPACE = "com.adobe.marketing.mobile.userprofile"
+
     object Plugins {
         const val ANDROID_GRADLE_PLUGIN_VERSION = "8.2.0"
         const val KOTLIN_GRADLE_PLUGIN_VERSION = "1.7.0"

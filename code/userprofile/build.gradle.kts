@@ -11,7 +11,7 @@ plugins {
 val buildUtils = BuildUtils()
 
 android {
-    namespace = "com.adobe.marketing.mobile.userprofile"
+    namespace = BuildConstants.PROJECT_NAMESPACE
 
     compileSdk = BuildConstants.ProjectConfig.COMPILE_SDK_VERSION
 
