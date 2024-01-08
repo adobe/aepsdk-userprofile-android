@@ -7,7 +7,9 @@ version: 2.1
 # Orbs are reusable packages of CircleCI configuration that you may share across projects, enabling you to create encapsulated, parameterized commands, jobs, and executors that can be used across multiple projects.
 # See: https://circleci.com/docs/2.0/orb-intro/
 orbs:
-  android: circleci/android@2.1.2
+  # Use the circleci android orb version that supports OpenJDK17 required by AGP 8.2+
+  android: circleci/android@2.4.0
+  codecov: codecov/codecov@3.2.4
 
 jobs:
   build-project:
@@ -62,20 +64,10 @@ jobs:
           name: code coverage
           command: |
             make unit-test-coverage
-      - run:
-          name: Upload Code Coverage Report
-          command: |
-            curl -s https://codecov.io/bash > codecov;
-            VERSION=$(grep 'VERSION=\"[0-9\.]*\"' codecov | cut -d'"' -f2);
-            SHAVERSION=$(shasum -v);
-            echo "Using CodeCov version '$VERSION'"
-            echo "Using shasum '$SHAVERSION'"
-            for i in 1 256 512
-            do
-              shasum -a $i -c --ignore-missing <(curl -s "https://raw.githubusercontent.com/codecov/codecov-bash/${VERSION}/SHA${i}SUM") ||
-              shasum -a $i -c <(curl -s "https://raw.githubusercontent.com/codecov/codecov-bash/${VERSION}/SHA${i}SUM" | grep -w "codecov")
-            done
-            bash ./codecov -v -X s3 -c -D "./code/userprofile/build/reports/coverage/test/phone/debug" -F unit-tests
+      - codecov/upload:
+          file: code/userprofile/build/reports/coverage/test/phone/debug/report.xml
+          flags: unit-tests
+
 
   functional-test:
     executor:
@@ -103,20 +95,10 @@ jobs:
           name: code coverage
           command: |
             make functional-test-coverage
-      - run:
-          name: Upload Code Coverage Report
-          command: |
-            curl -s https://codecov.io/bash > codecov;
-            VERSION=$(grep 'VERSION=\"[0-9\.]*\"' codecov | cut -d'"' -f2);
-            SHAVERSION=$(shasum -v);
-            echo "Using CodeCov version '$VERSION'"
-            echo "Using shasum '$SHAVERSION'"
-            for i in 1 256 512
-            do
-              shasum -a $i -c --ignore-missing <(curl -s "https://raw.githubusercontent.com/codecov/codecov-bash/${VERSION}/SHA${i}SUM") ||
-              shasum -a $i -c <(curl -s "https://raw.githubusercontent.com/codecov/codecov-bash/${VERSION}/SHA${i}SUM" | grep -w "codecov")
-            done
-            bash ./codecov -v -X s3 -c -D "./code/userprofile/build/reports/coverage/androidTest/phone/debug" -F functional-tests
+      - codecov/upload:
+          file: code/core/build/reports/coverage/androidTest/phone/connected/debug/report.xml
+          flags: functional-tests
+
       - android/save-gradle-cache:
           cache-prefix: v1a
 
