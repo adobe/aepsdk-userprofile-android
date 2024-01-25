@@ -8,7 +8,7 @@
   OF ANY KIND, either express or implied. See the License for the specific language
   governing permissions and limitations under the License.
  */
-package com.adobe.mobile.marketing.aep.testapp
+package com.adobe.mobile.marketing.userprofile.testapp
 
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -25,7 +25,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.adobe.marketing.mobile.UserProfile
-import com.adobe.mobile.marketing.aep.testapp.ui.theme.AepsdkuserprofileandroidTheme
+import com.adobe.mobile.marketing.userprofile.testapp.ui.theme.AepsdkuserprofileandroidTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
