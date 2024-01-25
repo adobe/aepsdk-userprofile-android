@@ -24,7 +24,6 @@ assemble-app:
 		(./code/gradlew -p code/testapp  assemble)
 
 userprofile-publish-maven-local-jitpack:
-		(./code/gradlew -p code/userprofile assemblePhone)
 		(./code/gradlew -p code/userprofile publishReleasePublicationToMavenLocal -Pjitpack  -x signReleasePublication)
 
 build-release:
