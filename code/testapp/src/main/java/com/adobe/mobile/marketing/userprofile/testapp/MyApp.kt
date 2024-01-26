@@ -8,7 +8,7 @@
   OF ANY KIND, either express or implied. See the License for the specific language
   governing permissions and limitations under the License.
  */
-package com.adobe.mobile.marketing.aep.testapp
+package com.adobe.mobile.marketing.userprofile.testapp
 
 import android.app.Application
 import com.adobe.marketing.mobile.LoggingMode

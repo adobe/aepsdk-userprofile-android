@@ -3,6 +3,7 @@ pluginManagement {
         gradlePluginPortal()
         google()
         mavenCentral()
+        mavenLocal()
     }
 }
 
@@ -18,4 +19,7 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "aepsdk-userprofile-android"
-include (":userprofile", ":testapp")
+include (
+        ":userprofile",
+        ":testapp"
+)

@@ -1,11 +1,12 @@
-plugins {
-    id("com.android.application") version BuildConstants.Plugins.ANDROID_GRADLE_PLUGIN_VERSION apply false
-    id("org.jetbrains.kotlin.android") version BuildConstants.Plugins.KOTLIN_GRADLE_PLUGIN_VERSION apply false
-    id("com.diffplug.gradle.spotless") version BuildConstants.Plugins.SPOTLESS_GRADLE_PLUGIN_VERSION apply false
-}
-
-extra.apply {
-    set("signing.gnupg.executable", BuildConstants.Publishing.SIGNING_GNUPG_EXECUTABLE)
-    set("signing.gnupg.keyName", BuildConstants.Publishing.SIGNING_GNUPG_KEY_NAME)
-    set("signing.gnupg.passphrase", BuildConstants.Publishing.SIGNING_GNUPG_PASSPHRASE)
+buildscript {
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+        maven { url = uri("https://jitpack.io") }
+        mavenLocal()
+    }
+    dependencies {
+        classpath("com.github.adobe:aepsdk-commons:ce2a07254d")
+    }
 }

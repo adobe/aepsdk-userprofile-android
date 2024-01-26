@@ -99,3 +99,4 @@ lint/tmp/
 .idea/navEditor.xml
 .idea
 .vscode
+.DS_Store

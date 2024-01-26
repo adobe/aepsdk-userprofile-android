@@ -1,17 +1,18 @@
+import com.adobe.marketing.mobile.gradle.BuildConstants
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
 }
 
 android {
-    compileSdk = BuildConstants.ProjectConfig.COMPILE_SDK_VERSION
+    namespace = "com.adobe.mobile.marketing.userprofile.testapp"
 
     defaultConfig {
-        applicationId = "com.adobe.mobile.marketing.aep.testapp"
-        minSdk = BuildConstants.ProjectConfig.MIN_SDK_VERSION
-        targetSdk = BuildConstants.ProjectConfig.TARGET_SDK_VERSION
-        versionCode = BuildConstants.ProjectConfig.VERSION_CODE
-        versionName = BuildConstants.ProjectConfig.VERSION_NAME
+        applicationId = "com.adobe.mobile.marketing.userprofile.testapp"
+        minSdk = BuildConstants.Versions.MIN_SDK_VERSION
+        compileSdk = BuildConstants.Versions.COMPILE_SDK_VERSION
+        targetSdk = BuildConstants.Versions.TARGET_SDK_VERSION
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -25,14 +26,14 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = BuildConstants.ProjectConfig.JAVA_SOURCE_COMPATIBILITY
-        targetCompatibility = BuildConstants.ProjectConfig.JAVA_TARGET_COMPATIBILITY
+        sourceCompatibility = BuildConstants.Versions.JAVA_SOURCE_COMPATIBILITY
+        targetCompatibility = BuildConstants.Versions.JAVA_TARGET_COMPATIBILITY
     }
 
     kotlinOptions {
-        jvmTarget = BuildConstants.ProjectConfig.KOTLIN_JVM_TARGET
-        languageVersion = BuildConstants.ProjectConfig.KOTLIN_LANGUAGE_VERSION
-        apiVersion = BuildConstants.ProjectConfig.KOTLIN_API_VERSION
+        jvmTarget = BuildConstants.Versions.KOTLIN_JVM_TARGET
+        languageVersion = BuildConstants.Versions.KOTLIN_LANGUAGE_VERSION
+        apiVersion = BuildConstants.Versions.KOTLIN_API_VERSION
     }
 
     buildFeatures {
@@ -40,7 +41,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = BuildConstants.ProjectConfig.COMPOSE_VERSION
+        kotlinCompilerExtensionVersion = BuildConstants.Versions.COMPOSE_COMPILER
     }
 
     packaging {
@@ -48,17 +49,13 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
-
-    defaultConfig {
-        namespace = "com.adobe.mobile.marketing.aep.testapp"
-    }
 }
 
 dependencies {
-    implementation("androidx.core:core-ktx:${BuildConstants.ProjectConfig.KOTLIN_VERSION}")
-    implementation("androidx.compose.ui:ui:$BuildConstants.COMPOSE_VERSION")
-    implementation("androidx.compose.material:material:${BuildConstants.ProjectConfig.COMPOSE_VERSION}")
-    implementation("androidx.compose.ui:ui-tooling-preview:${BuildConstants.ProjectConfig.COMPOSE_VERSION}")
+    implementation("androidx.core:core-ktx:${BuildConstants.Versions.KOTLIN}")
+    implementation("androidx.compose.ui:ui:${BuildConstants.Versions.COMPOSE}")
+    implementation("androidx.compose.material:material:${BuildConstants.Versions.COMPOSE}")
+    implementation("androidx.compose.ui:ui-tooling-preview:${BuildConstants.Versions.COMPOSE}")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.3.1")
     implementation("androidx.activity:activity-compose:1.3.1")
     implementation(project(":userprofile"))
@@ -68,6 +65,6 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.3")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4:${BuildConstants.ProjectConfig.COMPOSE_VERSION}")
-    debugImplementation("androidx.compose.ui:ui-tooling:${BuildConstants.ProjectConfig.COMPOSE_VERSION}")
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4:${BuildConstants.Versions.COMPOSE}")
+    debugImplementation("androidx.compose.ui:ui-tooling:${BuildConstants.Versions.COMPOSE}")
 }
