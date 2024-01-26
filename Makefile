@@ -12,7 +12,7 @@ functional-test-coverage:
 		(./code/gradlew -p code/userprofile createPhoneDebugAndroidTestCoverageReport)
 
 javadoc:
-		(./code/gradlew -p code/userprofile javadocPublish)
+		(./code/gradlew -p code/userprofile javadocJar)
 
 publish: build-release
 		(./code/gradlew -p code/userprofile  publishReleasePublicationToSonatypeRepository -Prelease)
