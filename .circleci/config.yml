@@ -27,7 +27,7 @@ jobs:
             make assemble-phone
 
       - run:
-          name: publish jitpack build to local repository
+          name: build jitpack library
           command: |
             make userprofile-publish-maven-local-jitpack
 
