@@ -1,11 +1,13 @@
-name: Publish package to the Maven Central Repository
-on: workflow_dispatch
+name: Publish Snapshot
+on:
+  workflow_dispatch:
 
 jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
@@ -24,8 +26,8 @@ jobs:
         run: |
           echo $GPG_SECRET_KEYS | base64 --decode | gpg --import --no-tty --batch --yes
           echo $GPG_OWNERTRUST | base64 --decode | gpg --import-ownertrust --no-tty --batch --yes
-      - name: Publish to maven central staging repository
-        run: make publish
+      - name: Publish to Maven Central Repository
+        run: make ci-publish-staging
         env:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
