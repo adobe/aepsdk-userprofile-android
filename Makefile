@@ -30,5 +30,4 @@ build-release:
 		(./code/gradlew -p code/userprofile assemblePhoneRelease)
 
 ci-publish-staging: build-release
-	(./code/gradlew -p code/userprofile publishReleasePublicationToSonatypeRepository --stacktrace)
-
+	(./code/gradlew -p code/userprofile publishReleasePublicationToSonatypeRepository)

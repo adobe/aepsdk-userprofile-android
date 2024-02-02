@@ -26,7 +26,7 @@ import java.util.Map;
 
 public class UserProfile {
     private static final String LOG_TAG = "UserProfile";
-    private static final String EXTENSION_VERSION = "2.0.1";
+    private static final String EXTENSION_VERSION = "3.0.0";
     private static final String CLASS_NAME = "UserProfile";
     public static final Class<? extends Extension> EXTENSION = UserProfileExtension.class;
 
@@ -45,23 +45,6 @@ public class UserProfile {
     @NonNull
     public static String extensionVersion() {
         return EXTENSION_VERSION;
-    }
-
-    /**
-     * Registers the extension with the Mobile SDK. This method should be called only once in your application class.
-     *
-     * @deprecated as of 2.0.0, use {@link MobileCore#registerExtensions(List, AdobeCallback)} with
-     * {@link UserProfile#EXTENSION} instead.
-     */
-    @Deprecated
-    public static void registerExtension() {
-        MobileCore.registerExtension(UserProfileExtension.class, extensionError -> {
-            if (extensionError == null) {
-                return;
-            }
-            Log.error(LOG_TAG, CLASS_NAME, "There was an error when registering the UserProfile extension: %s",
-                    extensionError.getErrorName());
-        });
     }
 
     /**
