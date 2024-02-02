@@ -1,13 +1,6 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine.
-# See: https://circleci.com/docs/2.0/configuration-reference
-# For a detailed guide to building and testing on Android, read the docs:
-# https://circleci.com/docs/2.0/language-android/ for more details.
 version: 2.1
-
-# Orbs are reusable packages of CircleCI configuration that you may share across projects, enabling you to create encapsulated, parameterized commands, jobs, and executors that can be used across multiple projects.
-# See: https://circleci.com/docs/2.0/orb-intro/
 orbs:
-  # Use the circleci android orb version that supports OpenJDK17 required by AGP 8.2+
+  # Use the CircleCI Android orb version that supports OpenJDK17 required by AGP 8.2+
   android: circleci/android@2.4.0
   codecov: codecov/codecov@3.2.4
 
@@ -29,7 +22,7 @@ jobs:
       - run:
           name: build jitpack library
           command: |
-            make userprofile-publish-maven-local-jitpack
+            make ci-publish-maven-local-jitpack
 
       - store_artifacts:
           path: code/userprofile/build/libs
@@ -43,27 +36,49 @@ jobs:
           command: |
             make javadoc
 
-  unit-test:
+  build-and-unit-test:
     executor:
-      name: android/android-machine
+      name: android/android-docker
       resource-class: large
       tag: 2024.01.1
 
     steps:
-      # Checkout the code as the first step.
       - checkout
-      - android/create-avd:
-          avd-name: myavd
-          install: true
-          system-image: system-images;android-29;default;x86
+
       - run:
-          name: unit test
-          command: |
-            make unit-test
+          name: Check format
+          command: make checkformat
+
       - run:
-          name: code coverage
-          command: |
-            make unit-test-coverage
+          name: Check style
+          command: make checkstyle
+
+      - run:
+          name: Javadoc
+          command: make javadoc
+
+      - store_artifacts:
+          path: code/userprofile/build/docs/javadoc
+
+      - run:
+          name: Assemble phone
+          command: make assemble-phone
+
+      - run:
+          name: Build Jitpack Library
+          command: make ci-publish-maven-local-jitpack
+
+      - run:
+          name: Build Test app
+          command: make assemble-app
+
+      - run:
+          name: Run Unit tests
+          command: make unit-test-coverage
+
+      - store_test_results:
+          path: code/userprofile/build/test-results/testPhoneDebugUnitTest
+
       - codecov/upload:
           file: code/userprofile/build/reports/coverage/test/phone/debug/report.xml
           flags: unit-tests
@@ -75,26 +90,25 @@ jobs:
       resource-class: large
       tag: 2024.01.1
 
-    steps:
-      # Checkout the code as the first step.
+    steps:      
       - checkout
+
       - android/create-avd:
           avd-name: myavd
           install: true
           system-image: system-images;android-29;default;x86
+
       - android/start-emulator:
           avd-name: myavd
           no-window: true
           post-emulator-launch-assemble-command: ""
-          restore-gradle-cache-prefix: v1a
+          restore-gradle-cache-prefix: v1a      
+
       - run:
-          name: functional test
-          command: |
-            make functional-test
-      - run:
-          name: code coverage
+          name: Run Functional tests
           command: |
             make functional-test-coverage
+
       - codecov/upload:
           file: code/core/build/reports/coverage/androidTest/phone/connected/debug/report.xml
           flags: functional-tests
@@ -102,12 +116,8 @@ jobs:
       - android/save-gradle-cache:
           cache-prefix: v1a
 
-# Invoke jobs via workflows
-# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-  build-it: # This is the name of the workflow, feel free to change it to better match your workflow.
-    # Inside the workflow, you define the jobs you want to run.
+  build:
     jobs:
-      - build-project
-      - unit-test
+      - build-and-unit-test
       - functional-test

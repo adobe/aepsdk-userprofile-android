@@ -7,19 +7,17 @@
   the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
   OF ANY KIND, either express or implied. See the License for the specific language
   governing permissions and limitations under the License.
- */
+*/
+
 package com.adobe.marketing.mobile.userprofile;
 
 import androidx.annotation.NonNull;
-
 import com.adobe.marketing.mobile.services.Log;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 class JSONUtils {
     private static final String CLASS_NAME = "JSONUtils";
@@ -41,12 +39,20 @@ class JSONUtils {
                     JSONObject nestedJsonObject = (JSONObject) value;
                     map.put(key, convertJsonObjectToNestedMap(nestedJsonObject));
                 } else if (value instanceof JSONArray) {
-                    Log.error(UserProfileConstants.LOG_TAG, CLASS_NAME, "Profile Data doesn't support Array value.");
+                    Log.error(
+                            UserProfileConstants.LOG_TAG,
+                            CLASS_NAME,
+                            "Profile Data doesn't support Array value.");
                 } else {
                     map.put(key, value);
                 }
             } catch (Exception e) {
-                Log.error(UserProfileConstants.LOG_TAG, CLASS_NAME, "The value of [%s] is not supported: %s", key, e);
+                Log.error(
+                        UserProfileConstants.LOG_TAG,
+                        CLASS_NAME,
+                        "The value of [%s] is not supported: %s",
+                        key,
+                        e);
             }
         }
         return map;

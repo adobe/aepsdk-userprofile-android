@@ -1,3 +1,15 @@
+checkstyle:
+		(./code/gradlew -p code/userprofile checkstyle)
+
+checkformat:
+		(./code/gradlew -p code/userprofile spotlessCheck)
+
+format:
+		(./code/gradlew -p code/userprofile spotlessApply)
+
+javadoc:
+		(./code/gradlew -p code/userprofile javadocJar)
+
 unit-test:
 		(./code/gradlew -p code/userprofile testPhoneDebugUnitTest)
 
@@ -11,24 +23,20 @@ functional-test:
 functional-test-coverage:
 		(./code/gradlew -p code/userprofile createPhoneDebugAndroidTestCoverageReport)
 
-javadoc:
-		(./code/gradlew -p code/userprofile javadocJar)
-
-ci-publish: build-release
-		(./code/gradlew -p code/userprofile  publishReleasePublicationToSonatypeRepository -Prelease)
-
 assemble-phone:
 		(./code/gradlew -p code/userprofile  assemblePhone)
+
+assemble-phone-release:
+		(./code/gradlew -p code/userprofile assemblePhoneRelease)
 
 assemble-app:
 		(./code/gradlew -p code/testapp  assemble)
 
-userprofile-publish-maven-local-jitpack:
+ci-publish-maven-local-jitpack: assemble-phone-release
 		(./code/gradlew -p code/userprofile publishReleasePublicationToMavenLocal -Pjitpack  -x signReleasePublication)
 
-build-release:
-		(./code/gradlew -p code/userprofile assemblePhoneRelease)
+ci-publish-staging: assemble-phone-release
+		(./code/gradlew -p code/userprofile publishReleasePublicationToSonatypeRepository)
 
-ci-publish-staging: build-release
-	(./code/gradlew -p code/userprofile publishReleasePublicationToSonatypeRepository --stacktrace)
-
+ci-publish: assemble-phone-release
+		(./code/gradlew -p code/userprofile  publishReleasePublicationToSonatypeRepository -Prelease)
