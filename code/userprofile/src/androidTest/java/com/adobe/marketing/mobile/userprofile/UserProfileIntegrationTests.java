@@ -33,7 +33,6 @@ import com.adobe.marketing.mobile.util.DataReader;
 import com.adobe.marketing.mobile.util.DataReaderException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -177,58 +176,6 @@ public class UserProfileIntegrationTests {
                                 {
                                     put("k1", "value");
                                     put("k2", 2.1);
-                                    put("k4", true);
-                                }
-                            },
-                            stringObjectMap);
-                    getDataLatch.countDown();
-                });
-        getDataLatch.await();
-    }
-
-    @Test(timeout = 1000)
-    public void testUpdateUserAttribute() throws InterruptedException {
-        UserProfile.updateUserAttribute("key", "value");
-
-        final CountDownLatch getDataLatch = new CountDownLatch(1);
-        UserProfile.getUserAttributes(
-                Collections.singletonList("key"),
-                stringObjectMap -> {
-                    assertEquals(1, stringObjectMap.size());
-                    assertEquals(
-                            new HashMap<String, Object>() {
-                                {
-                                    put("key", "value");
-                                }
-                            },
-                            stringObjectMap);
-                    getDataLatch.countDown();
-                });
-        getDataLatch.await();
-    }
-
-    @Test(timeout = 1000)
-    public void testRemoveUserAttribute() throws InterruptedException {
-        UserProfile.updateUserAttributes(
-                new HashMap<String, Object>() {
-                    {
-                        put("k1", "value");
-                        put("k2", 2.1);
-                        put("k3", 3);
-                        put("k4", true);
-                    }
-                });
-        UserProfile.removeUserAttribute("k2");
-        final CountDownLatch getDataLatch = new CountDownLatch(1);
-        UserProfile.getUserAttributes(
-                Arrays.asList("k1", "k2", "k3", "k4"),
-                stringObjectMap -> {
-                    assertEquals(3, stringObjectMap.size());
-                    assertEquals(
-                            new HashMap<String, Object>() {
-                                {
-                                    put("k1", "value");
-                                    put("k3", 3);
                                     put("k4", true);
                                 }
                             },

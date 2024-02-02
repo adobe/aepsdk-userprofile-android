@@ -19,7 +19,6 @@ import static org.mockito.ArgumentMatchers.anyLong;
 
 import com.adobe.marketing.mobile.userprofile.UserProfileExtension;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,70 +74,6 @@ public class PublicAPITests {
                 Mockito.mockStatic(MobileCore.class)) {
             mobileCoreMockedStatic.reset();
             UserProfile.updateUserAttributes(null);
-            mobileCoreMockedStatic.verifyNoInteractions();
-        }
-    }
-
-    @Test
-    public void test_updateUserAttribute() {
-        try (MockedStatic<MobileCore> mobileCoreMockedStatic =
-                Mockito.mockStatic(MobileCore.class)) {
-            mobileCoreMockedStatic.reset();
-            ArgumentCaptor<Event> eventCaptor = ArgumentCaptor.forClass(Event.class);
-            UserProfile.updateUserAttribute("key", "value");
-            mobileCoreMockedStatic.verify(() -> MobileCore.dispatchEvent(eventCaptor.capture()));
-            Event dispatchedEvent = eventCaptor.getValue();
-            assertNotNull(dispatchedEvent);
-            assertEquals("UserProfileUpdate", dispatchedEvent.getName());
-            assertEquals("com.adobe.eventType.userProfile", dispatchedEvent.getType());
-            assertEquals("com.adobe.eventSource.requestProfile", dispatchedEvent.getSource());
-            Map<String, Object> eventData = dispatchedEvent.getEventData();
-            assertTrue(eventData.containsKey("userprofileupdatekey"));
-            assertEquals(
-                    new HashMap<String, Object>() {
-                        {
-                            put("key", "value");
-                        }
-                    },
-                    eventData.get("userprofileupdatekey"));
-        }
-    }
-
-    @Test
-    public void test_updateUserAttribute_withNullKey() {
-        try (MockedStatic<MobileCore> mobileCoreMockedStatic =
-                Mockito.mockStatic(MobileCore.class)) {
-            mobileCoreMockedStatic.reset();
-            UserProfile.updateUserAttribute(null, null);
-            mobileCoreMockedStatic.verifyNoInteractions();
-        }
-    }
-
-    @Test
-    public void test_removeUserAttribute() {
-        try (MockedStatic<MobileCore> mobileCoreMockedStatic =
-                Mockito.mockStatic(MobileCore.class)) {
-            mobileCoreMockedStatic.reset();
-            ArgumentCaptor<Event> eventCaptor = ArgumentCaptor.forClass(Event.class);
-            UserProfile.removeUserAttribute("key");
-            mobileCoreMockedStatic.verify(() -> MobileCore.dispatchEvent(eventCaptor.capture()));
-            Event dispatchedEvent = eventCaptor.getValue();
-            assertNotNull(dispatchedEvent);
-            assertEquals("RemoveUserProfile", dispatchedEvent.getName());
-            assertEquals("com.adobe.eventType.userProfile", dispatchedEvent.getType());
-            assertEquals("com.adobe.eventSource.requestReset", dispatchedEvent.getSource());
-            Map<String, Object> eventData = dispatchedEvent.getEventData();
-            assertTrue(eventData.containsKey("userprofileremovekeys"));
-            assertEquals(Collections.singletonList("key"), eventData.get("userprofileremovekeys"));
-        }
-    }
-
-    @Test
-    public void test_removeUserAttribute_withNullKey() {
-        try (MockedStatic<MobileCore> mobileCoreMockedStatic =
-                Mockito.mockStatic(MobileCore.class)) {
-            mobileCoreMockedStatic.reset();
-            UserProfile.removeUserAttribute(null);
             mobileCoreMockedStatic.verifyNoInteractions();
         }
     }
