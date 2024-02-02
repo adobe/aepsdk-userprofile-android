@@ -157,11 +157,13 @@ fun load(sharedPreferences: SharedPreferences): Map<String, Any?> {
 }
 
 fun update(key: String, value: String) {
-    UserProfile.updateUserAttribute(key, value);
+    val attributeMap = mapOf(key to value)
+    UserProfile.updateUserAttributes(attributeMap);
 }
 
 fun remove(key: String) {
-    UserProfile.removeUserAttribute(key)
+    val attributeNames = listOf(key)
+    UserProfile.removeUserAttributes(attributeNames)
 }
 
 
