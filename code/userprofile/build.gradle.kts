@@ -6,6 +6,7 @@ val mavenCoreVersion: String by project
 
 aepLibrary {
     namespace = "com.adobe.marketing.mobile.userprofile"
+    enableSpotless = true
     
     publishing {
         gitRepoName = "aepsdk-userprofile-android"
