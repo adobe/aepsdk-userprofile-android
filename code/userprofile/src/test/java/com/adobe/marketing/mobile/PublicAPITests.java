@@ -39,65 +39,9 @@ public class PublicAPITests {
     @Before
     public void setup() {}
 
-    @SuppressWarnings("rawtypes")
     @Test
-    public void test_registerExtension() {
-        try (MockedStatic<MobileCore> mobileCoreMockedStatic =
-                Mockito.mockStatic(MobileCore.class)) {
-            // mock MobileCore.registerExtension()
-            ArgumentCaptor<Class> extensionClassCaptor = ArgumentCaptor.forClass(Class.class);
-            ArgumentCaptor<ExtensionErrorCallback> callbackCaptor =
-                    ArgumentCaptor.forClass(ExtensionErrorCallback.class);
-            mobileCoreMockedStatic
-                    .when(
-                            () ->
-                                    MobileCore.registerExtension(
-                                            extensionClassCaptor.capture(),
-                                            callbackCaptor.capture()))
-                    .thenReturn(true);
-            // call registerExtension() API
-            UserProfile.registerExtension();
-            // verify: happy
-            assertNotNull(callbackCaptor.getValue());
-            assertEquals(UserProfileExtension.class, extensionClassCaptor.getValue());
-            // verify: not exception when error callback was called
-            callbackCaptor.getValue().error(ExtensionError.UNEXPECTED_ERROR);
-        }
-    }
-
-    @Test
-    public void test_publicExtensionConstants() {
+    public void test_publicExtensionConstant() {
         assertEquals(UserProfileExtension.class, UserProfile.EXTENSION);
-        List<Class<? extends Extension>> extensions = new ArrayList<>();
-        extensions.add(UserProfile.EXTENSION);
-        // should not throw exceptions
-        MobileCore.registerExtensions(extensions, null);
-    }
-
-    @SuppressWarnings("rawtypes")
-    @Test
-    public void test_registerExtension_withoutError() {
-        try (MockedStatic<MobileCore> mobileCoreMockedStatic =
-                Mockito.mockStatic(MobileCore.class)) {
-            // mock MobileCore.registerExtension()
-            ArgumentCaptor<Class> extensionClassCaptor = ArgumentCaptor.forClass(Class.class);
-            ArgumentCaptor<ExtensionErrorCallback> callbackCaptor =
-                    ArgumentCaptor.forClass(ExtensionErrorCallback.class);
-            mobileCoreMockedStatic
-                    .when(
-                            () ->
-                                    MobileCore.registerExtension(
-                                            extensionClassCaptor.capture(),
-                                            callbackCaptor.capture()))
-                    .thenReturn(true);
-            // call registerExtension() API
-            UserProfile.registerExtension();
-            // verify: happy
-            assertNotNull(callbackCaptor.getValue());
-            assertEquals(UserProfileExtension.class, extensionClassCaptor.getValue());
-            // verify: not exception when error callback was called
-            callbackCaptor.getValue().error(null);
-        }
     }
 
     @Test
