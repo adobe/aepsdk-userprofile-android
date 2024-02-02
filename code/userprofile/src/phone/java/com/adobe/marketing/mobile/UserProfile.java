@@ -32,6 +32,8 @@ public class UserProfile {
     private static final String GET_DATA_ATTRIBUTES = "userprofilegetattributes";
     private static final String REMOVE_DATA_KEYS = "userprofileremovekeys";
 
+    private static final long API_TIMEOUT = 5000L;
+
     private UserProfile() {}
 
     /**
@@ -211,28 +213,28 @@ public class UserProfile {
                                     : null;
 
                     @Override
-                    public void fail(AdobeError adobeError) {
+                    public void fail(final AdobeError adobeError) {
                         if (userCallbackWithError != null) {
                             userCallbackWithError.fail(adobeError);
                         }
                     }
 
                     @Override
-                    public void call(Map<String, Object> profileMap) {
+                    public void call(final Map<String, Object> profileMap) {
                         callback.call(profileMap);
                     }
                 };
         MobileCore.dispatchEventWithResponseCallback(
                 event,
-                5000L,
+                API_TIMEOUT,
                 new AdobeCallbackWithError<Event>() {
                     @Override
-                    public void fail(AdobeError adobeError) {
+                    public void fail(final AdobeError adobeError) {
                         adobeCallbackWithError.fail(adobeError);
                     }
 
                     @Override
-                    public void call(Event event) {
+                    public void call(final Event event) {
                         try {
                             Map<String, Object> profileMap =
                                     DataReader.getTypedMap(

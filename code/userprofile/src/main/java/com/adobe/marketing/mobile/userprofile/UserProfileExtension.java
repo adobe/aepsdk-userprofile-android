@@ -60,7 +60,7 @@ public class UserProfileExtension extends Extension {
     static final String CLASS_NAME = "UserProfileExtension";
     private ProfileData profileData;
 
-    protected UserProfileExtension(ExtensionApi extensionApi) {
+    protected UserProfileExtension(@NonNull final ExtensionApi extensionApi) {
         super(extensionApi);
     }
 

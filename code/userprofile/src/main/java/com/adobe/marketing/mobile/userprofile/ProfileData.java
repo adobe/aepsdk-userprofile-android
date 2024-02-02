@@ -47,7 +47,7 @@ class ProfileData {
     }
 
     @VisibleForTesting
-    ProfileData(NamedCollection namedCollection) {
+    ProfileData(final NamedCollection namedCollection) {
         this.namedCollection = namedCollection;
     }
 
