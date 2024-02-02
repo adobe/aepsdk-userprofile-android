@@ -5,37 +5,6 @@ orbs:
   codecov: codecov/codecov@3.2.4
 
 jobs:
-  build-project:
-    executor:
-      name: android/android-machine
-      resource-class: large
-      tag: 2024.01.1
-
-    steps:
-      # Checkout the code as the first step.
-      - checkout
-      - run:
-          name: build library
-          command: |
-            make assemble-phone
-
-      - run:
-          name: build jitpack library
-          command: |
-            make ci-publish-maven-local-jitpack
-
-      - store_artifacts:
-          path: code/userprofile/build/libs
-
-      - run:
-          name: build test app
-          command: |
-            make assemble-app
-      - run:
-          name: build java doc
-          command: |
-            make javadoc
-
   build-and-unit-test:
     executor:
       name: android/android-docker
