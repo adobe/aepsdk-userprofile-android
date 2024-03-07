@@ -7,18 +7,18 @@
   the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
   OF ANY KIND, either express or implied. See the License for the specific language
   governing permissions and limitations under the License.
- */
+*/
+
 package com.adobe.marketing.mobile.userprofile;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class JSONUtilsTests {
     @Test
@@ -34,18 +34,21 @@ public class JSONUtilsTests {
 
     @Test
     public void test_mapAsValue() throws JSONException {
-        String json = "{\"key1\":\"value\",\"key2\":{\"key1\":\"value\",\"key2\":1,\"key3\":1.2,\"key4\":true}}";
+        String json =
+                "{\"key1\":\"value\",\"key2\":{\"key1\":\"value\",\"key2\":1,\"key3\":1.2,\"key4\":true}}";
         JSONObject jsonObject = new JSONObject(json);
         Map<String, Object> map = JSONUtils.convertJsonObjectToNestedMap(jsonObject);
         assertEquals("value", map.get("key1"));
-        assertEquals(new HashMap<String, Object>() {
-            {
-                put("key1", "value");
-                put("key2", 1);
-                put("key3", 1.2);
-                put("key4", true);
-            }
-        }, map.get("key2"));
+        assertEquals(
+                new HashMap<String, Object>() {
+                    {
+                        put("key1", "value");
+                        put("key2", 1);
+                        put("key3", 1.2);
+                        put("key4", true);
+                    }
+                },
+                map.get("key2"));
     }
 
     @Test
