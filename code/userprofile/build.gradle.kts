@@ -16,5 +16,5 @@ aepLibrary {
 }
 
 dependencies {    
-    implementation("com.adobe.marketing.mobile:core:$mavenCoreVersion")
+    implementation("com.adobe.marketing.mobile:core:$mavenCoreVersion-SNAPSHOT")
 }
