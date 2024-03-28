@@ -60,10 +60,8 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.3.1")
 
     implementation(project(":userprofile"))
-    implementation("com.adobe.marketing.mobile:core:3.0.0-SNAPSHOT")
-    implementation("com.adobe.marketing.mobile:signal:3.0.0-SNAPSHOT") {
-        isTransitive = false
-    }
+    implementation("com.adobe.marketing.mobile:core:3.0.0")
+    implementation("com.adobe.marketing.mobile:signal:3.0.0") 
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.3")
