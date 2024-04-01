@@ -8,10 +8,21 @@ UserProfile extension has a dependency on [AEP Core SDK](https://github.com/adob
 
 1. Installation via [Maven](https://maven.apache.org/) & [Gradle](https://gradle.org/) is the easiest and recommended way to get the AEP SDK into your Android app. Add a dependency on UserProfile and Core to your mobile application. To ensure consistent builds, it is best to explicitly specify the dependency version and update them manually.
 
-   ```
-   implementation 'com.adobe.marketing.mobile:core:2.+'
-   implementation 'com.adobe.marketing.mobile:userprofile:2.+'
-   ```
+### Kotlin
+
+```kotlin
+implementation(platform("com.adobe.marketing.mobile:sdk-bom:3.+"))
+implementation("com.adobe.marketing.mobile:core")
+implementation("com.adobe.marketing.mobile:userprofile")
+```
+
+### Groovy
+
+```groovy
+implementation platform('com.adobe.marketing.mobile:sdk-bom:3.+')
+implementation 'com.adobe.marketing.mobile:core'
+implementation 'com.adobe.marketing.mobile:userprofile'
+```
 
 2. Import MobileCore and UserProfile extensions:
 
