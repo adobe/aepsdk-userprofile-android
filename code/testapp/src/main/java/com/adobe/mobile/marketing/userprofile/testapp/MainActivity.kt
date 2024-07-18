@@ -30,6 +30,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.adobe.marketing.mobile.Assurance
 import com.adobe.marketing.mobile.MobileCore
 import com.adobe.marketing.mobile.UserProfile
 import com.adobe.mobile.marketing.userprofile.testapp.ui.theme.AepsdkuserprofileandroidTheme
@@ -67,9 +68,16 @@ fun Input() {
         mutableStateOf(false)
     }
     var appId by remember { mutableStateOf("your-appId") }
-    Column(Modifier.padding(8.dp)) {
+    Column(
+        Modifier.padding(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Button(onClick = {
+            Assurance.startSession()
+        }) {
+            Text("Assurance(quick connect)")
+        }
         Row {
-
             TextField(
                 value = keyState.value,
                 onValueChange = { keyState.value = it },
