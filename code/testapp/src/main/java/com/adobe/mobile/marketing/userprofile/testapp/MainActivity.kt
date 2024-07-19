@@ -187,9 +187,10 @@ fun Input() {
             }
         }
         Button(onClick = {
-            MobileCore.trackAction("action", null)
+            // To test this, configure a rule in your launch property that triggers a profile update for the following condition: a trackAction event with the action type 'trigger_update_profile'.
+            MobileCore.trackAction("trigger_update_profile", null)
         }) {
-            Text(text = "trigger rule consequence(update profile)")
+            Text(text = "Trigger Rule (Update Profile)")
         }
     }
 }

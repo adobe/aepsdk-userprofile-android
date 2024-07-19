@@ -14,7 +14,6 @@ import android.app.Application
 import com.adobe.marketing.mobile.Assurance
 import com.adobe.marketing.mobile.LoggingMode
 import com.adobe.marketing.mobile.MobileCore
-import com.adobe.marketing.mobile.Signal
 import com.adobe.marketing.mobile.UserProfile
 
 class MyApp : Application() {
@@ -26,7 +25,6 @@ class MyApp : Application() {
         MobileCore.registerExtensions(
             listOf(
                 UserProfile.EXTENSION,
-                Signal.EXTENSION,
                 Assurance.EXTENSION
             )
         ) {

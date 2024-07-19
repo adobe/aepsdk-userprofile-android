@@ -61,7 +61,6 @@ dependencies {
 
     implementation(project(":userprofile"))
     implementation("com.adobe.marketing.mobile:core:latest.release")
-    implementation("com.adobe.marketing.mobile:signal:latest.release")
     implementation("com.adobe.marketing.mobile:assurance:latest.release")
 
     testImplementation("junit:junit:4.13.2")
