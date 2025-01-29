@@ -1,6 +1,8 @@
 checkstyle:
 		(./code/gradlew -p code/userprofile checkstyle)
 
+lint: checkstyle
+
 checkformat:
 		(./code/gradlew -p code/userprofile spotlessCheck)
 
