@@ -1,10 +1,10 @@
 checkstyle:
 		(./code/gradlew -p code/userprofile checkstyle)
 
-lint: checkstyle
-
 checkformat:
 		(./code/gradlew -p code/userprofile spotlessCheck)
+
+ci-lint: checkstyle checkformat
 
 format:
 		(./code/gradlew -p code/userprofile spotlessApply)
