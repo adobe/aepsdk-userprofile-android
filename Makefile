@@ -4,7 +4,8 @@ checkstyle:
 checkformat:
 		(./code/gradlew -p code/userprofile spotlessCheck)
 
-ci-lint: checkstyle checkformat
+# Used by build and test CI workflow
+lint: checkstyle checkformat
 
 format:
 		(./code/gradlew -p code/userprofile spotlessApply)
