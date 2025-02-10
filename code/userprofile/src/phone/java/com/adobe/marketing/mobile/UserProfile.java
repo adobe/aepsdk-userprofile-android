@@ -22,7 +22,7 @@ import java.util.Map;
 
 public class UserProfile {
     private static final String LOG_TAG = "UserProfile";
-    private static final String EXTENSION_VERSION = "3.0.0";
+    private static final String EXTENSION_VERSION = "3.0.1";
     private static final String CLASS_NAME = "UserProfile";
     private static final String UPDATE_DATA_KEY = "userprofileupdatekey";
     private static final String GET_DATA_ATTRIBUTES = "userprofilegetattributes";
