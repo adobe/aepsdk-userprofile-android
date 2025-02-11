@@ -14,16 +14,24 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.adobe.marketing.mobile.Assurance
+import com.adobe.marketing.mobile.MobileCore
 import com.adobe.marketing.mobile.UserProfile
 import com.adobe.mobile.marketing.userprofile.testapp.ui.theme.AepsdkuserprofileandroidTheme
 
@@ -59,9 +67,17 @@ fun Input() {
     val getterResultState = remember {
         mutableStateOf(false)
     }
-    Column(Modifier.padding(8.dp)) {
+    var appId by remember { mutableStateOf("your-appId") }
+    Column(
+        Modifier.padding(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Button(onClick = {
+            Assurance.startSession()
+        }) {
+            Text("Assurance(quick connect)")
+        }
         Row {
-
             TextField(
                 value = keyState.value,
                 onValueChange = { keyState.value = it },
@@ -148,6 +164,33 @@ fun Input() {
                     }
                 )
             }
+        }
+        Surface(
+            border = BorderStroke(1.dp, Color.Gray),
+            shape = RoundedCornerShape(8.dp),
+            modifier = Modifier.padding(8.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(PaddingValues(8.dp)),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                OutlinedTextField(
+                    value = appId,
+                    onValueChange = { appId = it },
+                    label = { Text("appId") }
+                )
+                Button(onClick = {
+                    MobileCore.configureWithAppID(appId)
+                }) {
+                    Text(text = "configureWithAppID(\"appId\")")
+                }
+            }
+        }
+        Button(onClick = {
+            // To test this, configure a rule in your launch property that triggers a profile update for the following condition: a trackAction event with the action type 'trigger_update_profile'.
+            MobileCore.trackAction("trigger_update_profile", null)
+        }) {
+            Text(text = "Trigger Rule (Update Profile)")
         }
     }
 }
